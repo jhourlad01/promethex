@@ -9,13 +9,30 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class AuthApiController extends BaseApiController
 {
+    protected Request $request;
+    protected array $params = [];
+
+    public function __construct(Request $request, array $params = [])
+    {
+        $this->request = $request;
+        $this->params = $params;
+    }
+
+    /**
+     * Get request parameter
+     */
+    protected function getParam(string $key): ?string
+    {
+        return $this->params[$key] ?? null;
+    }
+
     /**
      * Login user via API
      */
-    public function login(Request $request): Response
+    public function login(): Response
     {
         // Only accept JSON data
-        $data = $request->getJson();
+        $data = $this->request->getJson();
         
         if ($data === null) {
             return $this->error('Invalid JSON data or Content-Type must be application/json', 400);
@@ -57,7 +74,7 @@ class AuthApiController extends BaseApiController
     /**
      * Logout user via API
      */
-    public function logout(Request $request): Response
+    public function logout(): Response
     {
         Auth::logout();
         return $this->success([], 'Logout successful');
@@ -66,7 +83,7 @@ class AuthApiController extends BaseApiController
     /**
      * Get current authenticated user
      */
-    public function user(Request $request): Response
+    public function user(): Response
     {
         if (!Auth::check()) {
             return $this->unauthorized('Not authenticated');
@@ -86,7 +103,7 @@ class AuthApiController extends BaseApiController
     /**
      * Refresh authentication token/session
      */
-    public function refresh(Request $request): Response
+    public function refresh(): Response
     {
         if (!Auth::check()) {
             return $this->unauthorized('Not authenticated');

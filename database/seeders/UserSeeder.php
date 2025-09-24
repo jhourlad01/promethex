@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Clear existing users
-        $this->truncate('users');
+        $this->clearTable('users');
         
         // Insert sample users
         $users = [

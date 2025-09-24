@@ -76,6 +76,30 @@ class Product extends Model
     }
 
     /**
+     * Get the reviews for the product.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the approved reviews for the product.
+     */
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
+    /**
+     * Get the featured reviews for the product.
+     */
+    public function featuredReviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true)->where('is_featured', true);
+    }
+
+    /**
      * Get the product's display price (sale price if available, otherwise regular price).
      */
     public function getDisplayPriceAttribute(): float
@@ -321,6 +345,52 @@ class Product extends Model
         return static::where('manage_stock', true)
                     ->where('stock_quantity', '<=', 0)
                     ->get();
+    }
+
+    /**
+     * Get the average rating for the product.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return round($this->approvedReviews()->avg('rating') ?? 0, 1);
+    }
+
+    /**
+     * Get the total number of reviews for the product.
+     */
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    /**
+     * Get the rating distribution for the product.
+     */
+    public function getRatingDistributionAttribute(): array
+    {
+        $distribution = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+        
+        $this->approvedReviews()->each(function ($review) use (&$distribution) {
+            $distribution[$review->rating]++;
+        });
+        
+        return $distribution;
+    }
+
+    /**
+     * Check if user has reviewed this product.
+     */
+    public function hasUserReviewed(int $userId): bool
+    {
+        return $this->reviews()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * Get user's review for this product.
+     */
+    public function getUserReview(int $userId): ?Review
+    {
+        return $this->reviews()->where('user_id', $userId)->first();
     }
 
     /**

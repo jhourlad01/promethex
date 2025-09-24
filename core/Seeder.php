@@ -66,11 +66,24 @@ abstract class Seeder extends BaseSeeder
     protected function clearTable(string $table): void
     {
         try {
+            // Disable foreign key checks temporarily
+            Capsule::statement('SET FOREIGN_KEY_CHECKS=0');
+            
             // Try truncate first (faster)
             Capsule::table($table)->truncate();
+            
+            // Re-enable foreign key checks
+            Capsule::statement('SET FOREIGN_KEY_CHECKS=1');
         } catch (\Exception $e) {
-            // If truncate fails due to foreign key constraints, use delete
+            // If truncate fails, use delete
             Capsule::table($table)->delete();
+            
+            // Make sure foreign key checks are re-enabled
+            try {
+                Capsule::statement('SET FOREIGN_KEY_CHECKS=1');
+            } catch (\Exception $e2) {
+                // Ignore if already enabled
+            }
         }
     }
 

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
+            ReviewSeeder::class,
         ]);
         
         echo "All seeders completed!\n";

@@ -19,7 +19,7 @@ class ProductController extends Controller
         // Find product by slug
         $product = Product::where('slug', $slug)
             ->where('status', 'active')
-            ->with('category')
+            ->with(['category', 'approvedReviews.user'])
             ->first();
 
         if (!$product) {
@@ -37,10 +37,22 @@ class ProductController extends Controller
             ->limit(4)
             ->get();
 
+        // Get recent reviews for this product
+        $recentReviews = $product->approvedReviews()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Get review statistics
+        $reviewStats = \App\Models\Review::getProductStats($product->id);
+
         return $this->view('product/show', [
             'title' => $product->name . ' - Promethex',
             'product' => $product,
             'relatedProducts' => $relatedProducts,
+            'recentReviews' => $recentReviews,
+            'reviewStats' => $reviewStats,
             'meta_description' => $product->meta_description ?? $product->short_description,
             'meta_title' => $product->meta_title ?? $product->name
         ], 'layout');

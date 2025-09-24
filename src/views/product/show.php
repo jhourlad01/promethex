@@ -232,10 +232,167 @@
                     <!-- Reviews Tab -->
                     <div class="tab-pane fade" id="reviews" role="tabpanel">
                         <div class="product-reviews">
-                            <div class="text-center py-5">
-                                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">Reviews Coming Soon</h5>
-                                <p class="text-muted">Customer reviews will be available here.</p>
+                            <?php if ($reviewStats['total_reviews'] > 0): ?>
+                                <!-- Review Summary -->
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <div class="review-summary text-center p-4 bg-light rounded">
+                                            <div class="display-4 fw-bold text-primary mb-2"><?= $reviewStats['average_rating'] ?></div>
+                                            <div class="stars mb-2">
+                                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                    <?php if ($i <= $reviewStats['average_rating']): ?>
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    <?php else: ?>
+                                                        <i class="far fa-star text-warning"></i>
+                                                    <?php endif; ?>
+                                                <?php endfor; ?>
+                                            </div>
+                                            <div class="text-muted">Based on <?= $reviewStats['total_reviews'] ?> reviews</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="rating-breakdown">
+                                            <?php for ($rating = 5; $rating >= 1; $rating--): ?>
+                                                <?php 
+                                                $count = $reviewStats['rating_distribution'][$rating];
+                                                $percentage = $reviewStats['total_reviews'] > 0 ? ($count / $reviewStats['total_reviews']) * 100 : 0;
+                                                ?>
+                                                <div class="rating-bar d-flex align-items-center mb-2">
+                                                    <div class="rating-label me-2" style="width: 20px;">
+                                                        <small><?= $rating ?> star<?= $rating > 1 ? 's' : '' ?></small>
+                                                    </div>
+                                                    <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                                        <div class="progress-bar bg-warning" style="width: <?= $percentage ?>%"></div>
+                                                    </div>
+                                                    <div class="rating-count" style="width: 40px;">
+                                                        <small class="text-muted"><?= $count ?></small>
+                                                    </div>
+                                                </div>
+                                            <?php endfor; ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recent Reviews -->
+                                <div class="recent-reviews">
+                                    <h6 class="fw-bold mb-3">Recent Reviews</h6>
+                                    <?php foreach ($recentReviews as $review): ?>
+                                        <div class="review-item border-bottom pb-3 mb-3">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="reviewer-info d-flex align-items-center">
+                                                    <div class="reviewer-avatar me-3">
+                                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <?= $review->user->initials ?>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold"><?= htmlspecialchars($review->user->name) ?></div>
+                                                        <div class="text-muted small"><?= $review->formatted_date ?></div>
+                                                    </div>
+                                                </div>
+                                                <div class="review-rating">
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <?php if ($i <= $review->rating): ?>
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        <?php else: ?>
+                                                            <i class="far fa-star text-warning"></i>
+                                                        <?php endif; ?>
+                                                    <?php endfor; ?>
+                                                </div>
+                                            </div>
+                                            
+                                            <?php if ($review->title): ?>
+                                                <h6 class="fw-bold mb-2"><?= htmlspecialchars($review->title) ?></h6>
+                                            <?php endif; ?>
+                                            
+                                            <?php if ($review->comment): ?>
+                                                <p class="text-muted mb-2"><?= nl2br(htmlspecialchars($review->comment)) ?></p>
+                                            <?php endif; ?>
+                                            
+                                            <div class="review-meta d-flex justify-content-between align-items-center">
+                                                <div class="review-badges">
+                                                    <?php if ($review->is_verified_purchase): ?>
+                                                        <span class="badge bg-success me-2">Verified Purchase</span>
+                                                    <?php endif; ?>
+                                                    <?php if ($review->is_featured): ?>
+                                                        <span class="badge bg-primary">Featured</span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="review-helpful">
+                                                    <button class="btn btn-sm btn-outline-secondary" onclick="markHelpful(<?= $review->id ?>)">
+                                                        <i class="fas fa-thumbs-up me-1"></i>
+                                                        Helpful (<?= $review->helpful_count ?>)
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    
+                                    <?php if ($reviewStats['total_reviews'] > 5): ?>
+                                        <div class="text-center mt-4">
+                                            <button class="btn btn-outline-primary" onclick="loadMoreReviews()">
+                                                Load More Reviews
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="text-center py-5">
+                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Reviews Yet</h5>
+                                    <p class="text-muted">Be the first to review this product!</p>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Write a Review Form -->
+                            <div class="write-review mt-5 pt-4 border-top">
+                                <h6 class="fw-bold mb-3">Write a Review</h6>
+                                <form id="reviewForm" class="needs-validation" novalidate>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="reviewRating" class="form-label">Rating *</label>
+                                            <div class="rating-input">
+                                                <div class="stars d-flex gap-1">
+                                                    <i class="fas fa-star star-rating" data-rating="1"></i>
+                                                    <i class="fas fa-star star-rating" data-rating="2"></i>
+                                                    <i class="fas fa-star star-rating" data-rating="3"></i>
+                                                    <i class="fas fa-star star-rating" data-rating="4"></i>
+                                                    <i class="fas fa-star star-rating" data-rating="5"></i>
+                                                </div>
+                                                <input type="hidden" id="reviewRating" name="rating" required>
+                                                <div class="invalid-feedback">Please select a rating.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="reviewTitle" class="form-label">Review Title</label>
+                                            <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="Summarize your review">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="reviewComment" class="form-label">Your Review *</label>
+                                        <textarea class="form-control" id="reviewComment" name="comment" rows="4" placeholder="Tell others about your experience with this product" required></textarea>
+                                        <div class="invalid-feedback">Please write a review.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="verifiedPurchase" name="is_verified_purchase">
+                                            <label class="form-check-label" for="verifiedPurchase">
+                                                I purchased this product
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-2"></i>Submit Review
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="resetReviewForm()">
+                                            <i class="fas fa-undo me-2"></i>Reset
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -311,4 +468,191 @@ function decreaseQuantity() {
         quantityInput.value = current - 1;
     }
 }
+
+// Review System JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.star-rating');
+    const ratingInput = document.getElementById('reviewRating');
+    
+    if (stars.length > 0 && ratingInput) {
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.dataset.rating);
+                ratingInput.value = rating;
+                
+                // Update star display
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('text-warning');
+                        s.classList.remove('text-muted');
+                    } else {
+                        s.classList.remove('text-warning');
+                        s.classList.add('text-muted');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.dataset.rating);
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('text-warning');
+                        s.classList.remove('text-muted');
+                    } else {
+                        s.classList.remove('text-warning');
+                        s.classList.add('text-muted');
+                    }
+                });
+            });
+        });
+        
+        // Reset stars on mouse leave
+        document.querySelector('.stars').addEventListener('mouseleave', function() {
+            const currentRating = parseInt(ratingInput.value) || 0;
+            stars.forEach((s, index) => {
+                if (index < currentRating) {
+                    s.classList.add('text-warning');
+                    s.classList.remove('text-muted');
+                } else {
+                    s.classList.remove('text-warning');
+                    s.classList.add('text-muted');
+                }
+            });
+        });
+    }
+});
+
+// Review form submission
+document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const reviewData = {
+        product_id: <?= $product->id ?>,
+        rating: parseInt(formData.get('rating')),
+        title: formData.get('title'),
+        comment: formData.get('comment'),
+        is_verified_purchase: formData.get('is_verified_purchase') === 'on'
+    };
+    
+    // Validate form
+    if (!reviewData.rating || !reviewData.comment.trim()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+    
+    // Submit review
+    fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Review submitted successfully!');
+            location.reload(); // Reload page to show new review
+        } else {
+            alert('Error: ' + (data.message || 'Failed to submit review'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the review.');
+    });
+});
+
+// Mark review as helpful
+function markHelpful(reviewId) {
+    fetch(`/api/reviews/${reviewId}/helpful`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update helpful count
+            const button = event.target.closest('button');
+            const countText = button.querySelector('.fa-thumbs-up').nextSibling;
+            countText.textContent = ` Helpful (${data.helpful_count})`;
+            
+            // Disable button to prevent multiple votes
+            button.disabled = true;
+            button.classList.add('btn-success');
+            button.classList.remove('btn-outline-secondary');
+        } else {
+            alert('Error: ' + (data.message || 'Failed to mark as helpful'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while marking the review as helpful.');
+    });
+}
+
+// Reset review form
+function resetReviewForm() {
+    document.getElementById('reviewForm').reset();
+    document.getElementById('reviewRating').value = '';
+    
+    // Reset stars
+    document.querySelectorAll('.star-rating').forEach(star => {
+        star.classList.remove('text-warning');
+        star.classList.add('text-muted');
+    });
+}
+
+// Load more reviews (placeholder)
+function loadMoreReviews() {
+    alert('Load more reviews functionality will be implemented soon!');
+}
 </script>
+
+<!-- Review System CSS -->
+<style>
+.star-rating {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #dee2e6;
+    transition: color 0.2s ease;
+}
+
+.star-rating:hover,
+.star-rating.text-warning {
+    color: #ffc107 !important;
+}
+
+.review-item {
+    transition: background-color 0.2s ease;
+}
+
+.review-item:hover {
+    background-color: #f8f9fa;
+}
+
+.reviewer-avatar {
+    flex-shrink: 0;
+}
+
+.rating-bar .progress {
+    background-color: #e9ecef;
+}
+
+.rating-bar .progress-bar {
+    background-color: #ffc107;
+}
+
+.write-review {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.review-summary {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+</style>

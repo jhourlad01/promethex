@@ -100,14 +100,11 @@
                             <?php endif; ?>
                             <small class="text-muted d-block">Free shipping</small>
                         </div>
-                        <div class="d-flex gap-2">
-                            <a href="/product/<?= $product->slug ?>" class="btn btn-outline-primary px-3 py-2 rounded-pill">
-                                View Details
-                            </a>
-                            <button class="btn btn-primary px-4 py-2 rounded-pill">
-                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                            </button>
-                        </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary px-4 py-2 rounded-pill flex-grow-1">
+                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                    </button>
+                                </div>
                     </div>
                 </div>
             </div>

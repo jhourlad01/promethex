@@ -2,6 +2,85 @@
 
 A custom lightweight PHP framework with essential features for building web applications, featuring integrated monitoring via DataDog AI and a flexible setup system.
 
+## PHP Requirements
+
+### Required PHP Version
+- **PHP 7.4+** (minimum)
+- **PHP 8.1+** (recommended for full Illuminate Database support)
+
+### Required PHP Extensions
+
+The framework requires the following PHP extensions to function properly:
+
+#### Core Database Extensions
+- **`pdo`** - Required by Illuminate Database (composer dependency)
+- **`pdo_sqlite`** - For SQLite database support (testing and development)
+- **`pdo_mysql`** - For MySQL database support (production)
+
+#### Essential Framework Extensions
+- **`json`** - For JSON handling (API responses, configuration files)
+- **`mbstring`** - For multibyte string handling
+- **`openssl`** - For encryption/security (JWT tokens, password hashing)
+- **`session`** - For session management (authentication)
+- **`filter`** - For input filtering and validation
+- **`hash`** - For password hashing and security functions
+- **`fileinfo`** - For file type detection
+- **`xml`** - For XML processing
+- **`zip`** - For archive handling
+- **`curl`** - For HTTP requests (external APIs, DataDog)
+
+#### Optional Extensions (Recommended)
+- **`bcmath`** - For precise mathematical calculations
+- **`dom`** - For XML/DOM processing
+- **`exif`** - For image metadata handling
+- **`ftp`** - For file transfer operations
+- **`iconv`** - For character encoding conversion
+- **`libxml`** - For XML processing
+- **`SimpleXML`** - For XML parsing
+- **`xmlreader`** - For XML reading
+- **`xmlwriter`** - For XML writing
+- **`zlib`** - For compression support
+
+### Extension Verification
+
+Check if all required extensions are installed:
+
+```bash
+# Check all PHP extensions
+php -m
+
+# Check specific extensions
+php -r "echo extension_loaded('pdo') ? 'PDO: OK' : 'PDO: MISSING';"
+php -r "echo extension_loaded('pdo_sqlite') ? 'PDO SQLite: OK' : 'PDO SQLite: MISSING';"
+php -r "echo extension_loaded('pdo_mysql') ? 'PDO MySQL: OK' : 'PDO MySQL: MISSING';"
+
+# Check PDO drivers
+php -r "echo 'Available PDO drivers: ' . implode(', ', PDO::getAvailableDrivers());"
+```
+
+### Installation Notes
+
+#### Windows (XAMPP/WAMP)
+Most Windows PHP distributions (XAMPP, WAMP) include all required extensions by default.
+
+#### Linux/Ubuntu/Debian
+```bash
+sudo apt update
+sudo apt install php8.3-sqlite3 php8.3-mysql php8.3-mbstring php8.3-curl php8.3-zip php8.3-xml php8.3-bcmath
+```
+
+#### macOS (Homebrew)
+```bash
+brew install php
+# Extensions are usually included by default
+```
+
+#### Docker
+```dockerfile
+FROM php:8.3-fpm
+RUN docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring curl zip xml bcmath
+```
+
 ## Flexible Feature System
 
 The framework uses a flexible feature system that allows you to enable/disable features based on your needs. This keeps the framework lightweight while providing powerful optional capabilities.

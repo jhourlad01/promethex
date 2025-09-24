@@ -9,23 +9,38 @@ class Auth
 
     public static function attempt(array $credentials): bool
     {
-        // This is a basic implementation - in real apps, you'd check against database
         $email = $credentials['email'] ?? '';
         $password = $credentials['password'] ?? '';
 
-        // Example: Check against hardcoded user (replace with database lookup)
-        if ($email === 'admin@example.com' && $password === 'password') {
-            $user = [
-                'id' => 1,
-                'email' => 'admin@example.com',
-                'name' => 'Administrator'
-            ];
-            
-            self::login($user);
-            return true;
+        if (empty($email) || empty($password)) {
+            return false;
         }
 
-        return false;
+        // Find user by email in database
+        $user = \Illuminate\Database\Capsule\Manager::table('users')
+            ->where('email', $email)
+            ->where('is_active', true)
+            ->first();
+
+        if (!$user || !password_verify($password, $user->password)) {
+            return false;
+        }
+
+        // Convert to array and login
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'is_active' => $user->is_active,
+            'phone' => $user->phone,
+            'address' => $user->address,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at
+        ];
+
+        self::login($userData);
+        return true;
     }
 
     public static function login($user, bool $remember = false): void

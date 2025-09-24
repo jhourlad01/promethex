@@ -15,7 +15,7 @@ class Request
     {
         $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $this->path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-        $this->headers = getallheaders() ?: [];
+        $this->headers = $this->getAllHeaders();
         $this->body = file_get_contents('php://input');
         $this->query = $_GET;
         $this->post = $_POST;
@@ -24,6 +24,30 @@ class Request
     public function getMethod(): string
     {
         return $this->method;
+    }
+
+    /**
+     * Set HTTP method (for testing)
+     */
+    public function setMethod(string $method): void
+    {
+        $this->method = strtoupper($method);
+    }
+
+    /**
+     * Set request body (for testing)
+     */
+    public function setBody(string $body): void
+    {
+        $this->body = $body;
+    }
+
+    /**
+     * Set header (for testing)
+     */
+    public function setHeader(string $name, string $value): void
+    {
+        $this->headers[$name] = $value;
     }
 
     public function getPath(): string
@@ -110,5 +134,27 @@ class Request
     {
         $accept = $this->getHeader('Accept') ?? '';
         return strpos($accept, 'application/json') !== false || $this->isAjax();
+    }
+
+    /**
+     * Get all headers with Windows compatibility
+     */
+    private function getAllHeaders(): array
+    {
+        if (function_exists('getallheaders')) {
+            return getallheaders() ?: [];
+        }
+        
+        // Fallback for Windows/Apache
+        $headers = [];
+        foreach ($_SERVER as $key => $value) {
+            if (strpos($key, 'HTTP_') === 0) {
+                $header = str_replace('_', '-', substr($key, 5));
+                $header = ucwords(strtolower($header), '-');
+                $headers[$header] = $value;
+            }
+        }
+        
+        return $headers;
     }
 }

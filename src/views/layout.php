@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-            <style>
+    <style>
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
                 
                 :root {
@@ -256,12 +256,12 @@
                         transform: translateY(-6px);
                     }
                 }
-            </style>
+    </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-        <div class="container">
+    <div class="container">
             <a class="navbar-brand fw-bold text-dark" href="/">
                 <span class="brand-gradient">Promethex</span>
             </a>
@@ -291,17 +291,37 @@
                         <i class="fas fa-shopping-cart fs-5"></i>
                         <span class="position-absolute badge rounded-pill bg-primary" style="font-size: 0.7rem; padding: 0.25em 0.5em; top: -5px; right: -5px;">3</span>
                     </a>
-                    <a class="nav-link ms-3" href="/account">
-                        <i class="fas fa-user fs-5"></i>
-                    </a>
+                    <?php if (\Framework\Auth::check()): ?>
+                        <div class="nav-item dropdown ms-3">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user fs-5"></i>
+                                <span class="ms-1"><?= htmlspecialchars(\Framework\Auth::user()['name'] ?? 'User') ?></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/account"><i class="fas fa-user me-2"></i>My Account</a></li>
+                                <li><a class="dropdown-item" href="/orders"><i class="fas fa-box me-2"></i>My Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <button type="button" class="dropdown-item text-danger" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a class="nav-link ms-3" href="/login">
+                            <i class="fas fa-sign-in-alt fs-5"></i>
+                            <span class="ms-1">Login</span>
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-    </nav>
-    
+        </nav>
+        
     <!-- Main Content -->
     <main class="main-content">
-        <?= $content ?>
+            <?= $content ?>
     </main>
     
     <!-- Footer -->
@@ -375,7 +395,35 @@
         </div>
     </footer>
     
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <!-- Bootstrap JS -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            
+            <script>
+            async function logout() {
+                try {
+                    const response = await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Redirect to home page
+                        window.location.href = '/';
+                    } else {
+                        console.error('Logout failed:', result.message);
+                        // Still redirect on error
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    // Still redirect on error
+                    window.location.href = '/';
+                }
+            }
+            </script>
 </body>
 </html>

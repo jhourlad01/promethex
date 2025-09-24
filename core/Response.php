@@ -46,6 +46,14 @@ class Response
         echo $this->content;
     }
 
+    public function redirect(string $url, int $statusCode = 302): self
+    {
+        $this->statusCode = $statusCode;
+        $this->headers['Location'] = $url;
+        $this->content = '';
+        return $this;
+    }
+
     public function getContent(): string
     {
         return $this->content;

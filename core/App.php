@@ -164,6 +164,11 @@ class App
 
     public function run(): void
     {
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $request = new Request();
         $response = $this->router->dispatch($request);
         $response->send();

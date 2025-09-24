@@ -28,15 +28,41 @@ class Auth
         return false;
     }
 
-    public static function login(array $user): void
+    public static function login($user, bool $remember = false): void
     {
-        $_SESSION[self::$sessionKey] = $user;
-        self::$user = $user;
+        // Convert object to array if needed
+        if (is_object($user)) {
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'is_active' => $user->is_active,
+                'phone' => $user->phone,
+                'address' => $user->address,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at
+            ];
+        } else {
+            $userData = $user;
+        }
+        
+        $_SESSION[self::$sessionKey] = $userData;
+        self::$user = $userData;
+        
+        // Handle remember me functionality
+        if ($remember) {
+            // Store remember me flag in session
+            $_SESSION['remember_me'] = true;
+            // In a real app, you'd implement remember tokens here
+            // For now, we'll just store the flag
+        }
     }
 
     public static function logout(): void
     {
         unset($_SESSION[self::$sessionKey]);
+        unset($_SESSION['remember_me']);
         self::$user = null;
     }
 

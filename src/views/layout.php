@@ -274,9 +274,6 @@
                         <a class="nav-link fw-medium px-3" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-medium px-3" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link fw-medium px-3" href="/categories">Categories</a>
                     </li>
                 </ul>
@@ -326,7 +323,7 @@
                     <div class="footer-brand mb-3">
                         <span class="brand-gradient fs-3 fw-bold">Promethex</span>
                     </div>
-                    <p class="text-muted mb-4">Your trusted destination for premium products and exceptional shopping experiences.</p>
+                    <p class="text-light mb-4">Your trusted destination for premium products and exceptional shopping experiences.</p>
                     <div class="social-links">
                         <a href="#" class="social-link me-3"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-link me-3"><i class="fab fa-twitter"></i></a>
@@ -334,51 +331,30 @@
                         <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-3">Shop</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="/products" class="footer-link">All Products</a></li>
-                        <li><a href="/categories" class="footer-link">Categories</a></li>
-                        <li><a href="/new-arrivals" class="footer-link">New Arrivals</a></li>
-                        <li><a href="/best-sellers" class="footer-link">Best Sellers</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
+                <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="fw-bold mb-3">Support</h6>
                     <ul class="list-unstyled">
                         <li><a href="/help" class="footer-link">Help Center</a></li>
                         <li><a href="/shipping" class="footer-link">Shipping Info</a></li>
                         <li><a href="/returns" class="footer-link">Returns</a></li>
-                        <li><a href="/contact" class="footer-link">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-3">Company</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="/about" class="footer-link">About Us</a></li>
-                        <li><a href="/careers" class="footer-link">Careers</a></li>
-                        <li><a href="/press" class="footer-link">Press</a></li>
-                        <li><a href="/partners" class="footer-link">Partners</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4">
+                <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="fw-bold mb-3">Legal</h6>
                     <ul class="list-unstyled">
                         <li><a href="/privacy" class="footer-link">Privacy Policy</a></li>
                         <li><a href="/terms" class="footer-link">Terms of Service</a></li>
-                        <li><a href="/cookies" class="footer-link">Cookie Policy</a></li>
-                        <li><a href="/security" class="footer-link">Security</a></li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="text-muted mb-0">&copy; <?= date('Y') ?> Promethex. All rights reserved.</p>
+                    <p class="text-light mb-0">&copy; <?= date('Y') ?> Promethex. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="payment-methods">
-                        <span class="text-muted me-2">We accept:</span>
+                        <span class="text-light me-2">We accept:</span>
                         <i class="fab fa-cc-visa fs-4 me-2"></i>
                         <i class="fab fa-cc-mastercard fs-4 me-2"></i>
                         <i class="fab fa-cc-paypal fs-4 me-2"></i>

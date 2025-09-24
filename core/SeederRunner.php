@@ -32,7 +32,7 @@ class SeederRunner
     /**
      * Run a specific seeder.
      */
-    public static function runSeeder(string $name): void
+    public static function runSpecificSeeder(string $name): void
     {
         if (!isset(self::$seeders[$name])) {
             throw new \Exception("Seeder '{$name}' not found");
@@ -93,7 +93,7 @@ class SeederRunner
         
         Capsule::table(self::$seedersTable)->insert([
             'seeder' => $name,
-            'run_at' => now()
+            'run_at' => date('Y-m-d H:i:s')
         ]);
         
         echo "Seeder {$name} completed\n";

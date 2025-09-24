@@ -63,11 +63,9 @@ abstract class Seeder extends BaseSeeder
     /**
      * Run another seeder.
      */
-    protected function call(string $seeder, array $parameters = []): void
+    public function call($class, $silent = false, array $parameters = []): void
     {
-        $seederClass = new $seeder();
-        $seederClass->setContainer($this->container);
-        $seederClass->setCommand($this->command);
+        $seederClass = new $class();
         $seederClass->run();
     }
 

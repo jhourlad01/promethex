@@ -279,12 +279,6 @@
                     <li class="nav-item">
                         <a class="nav-link fw-medium px-3" href="/categories">Categories</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-medium px-3" href="/about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-medium px-3" href="/contact">Contact</a>
-                    </li>
                 </ul>
                 <div class="navbar-nav">
                     <a class="nav-link position-relative" href="/cart">

@@ -12,10 +12,19 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         // Clear existing products
-        $this->truncate('products');
+        $this->clearTable('products');
         
-        // Insert sample products
+        // Get category IDs
+        $headphonesCategoryId = $this->getCategoryId('Headphones');
+        $speakersCategoryId = $this->getCategoryId('Speakers');
+        $smartWatchesCategoryId = $this->getCategoryId('Smart Watches');
+        $gamingKeyboardsCategoryId = $this->getCategoryId('Gaming Keyboards');
+        $gamingMiceCategoryId = $this->getCategoryId('Gaming Mice');
+        $usbHubsCategoryId = $this->getCategoryId('USB Hubs');
+        
+        // Insert sample products organized by categories
         $products = [
+            // Headphones Category
             [
                 'name' => 'Premium Wireless Headphones',
                 'slug' => 'premium-wireless-headphones',
@@ -24,6 +33,7 @@ class ProductSeeder extends Seeder
                 'price' => 199.99,
                 'sale_price' => 149.99,
                 'sku' => 'PWH-001',
+                'category_id' => $headphonesCategoryId,
                 'stock_quantity' => 50,
                 'manage_stock' => true,
                 'in_stock' => true,
@@ -48,6 +58,8 @@ class ProductSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            
+            // Smart Watches Category
             [
                 'name' => 'Smart Fitness Watch',
                 'slug' => 'smart-fitness-watch',
@@ -56,6 +68,7 @@ class ProductSeeder extends Seeder
                 'price' => 299.99,
                 'sale_price' => null,
                 'sku' => 'SFW-002',
+                'category_id' => $smartWatchesCategoryId,
                 'stock_quantity' => 30,
                 'manage_stock' => true,
                 'in_stock' => true,
@@ -80,6 +93,8 @@ class ProductSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            
+            // Speakers Category
             [
                 'name' => 'Bluetooth Speaker Pro',
                 'slug' => 'bluetooth-speaker-pro',
@@ -88,6 +103,7 @@ class ProductSeeder extends Seeder
                 'price' => 149.99,
                 'sale_price' => 119.99,
                 'sku' => 'BSP-003',
+                'category_id' => $speakersCategoryId,
                 'stock_quantity' => 75,
                 'manage_stock' => true,
                 'in_stock' => true,
@@ -112,6 +128,8 @@ class ProductSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            
+            // Gaming Keyboards Category
             [
                 'name' => 'Gaming Mechanical Keyboard',
                 'slug' => 'gaming-mechanical-keyboard',
@@ -120,6 +138,7 @@ class ProductSeeder extends Seeder
                 'price' => 129.99,
                 'sale_price' => null,
                 'sku' => 'GMK-004',
+                'category_id' => $gamingKeyboardsCategoryId,
                 'stock_quantity' => 40,
                 'manage_stock' => true,
                 'in_stock' => true,
@@ -144,6 +163,8 @@ class ProductSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            
+            // USB Hubs Category
             [
                 'name' => 'USB-C Multi-Port Hub',
                 'slug' => 'usb-c-multi-port-hub',
@@ -152,6 +173,7 @@ class ProductSeeder extends Seeder
                 'price' => 49.99,
                 'sale_price' => 39.99,
                 'sku' => 'UCM-005',
+                'category_id' => $usbHubsCategoryId,
                 'stock_quantity' => 100,
                 'manage_stock' => true,
                 'in_stock' => true,
@@ -176,6 +198,8 @@ class ProductSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            
+            // Gaming Mice Category
             [
                 'name' => 'Wireless Gaming Mouse',
                 'slug' => 'wireless-gaming-mouse',
@@ -184,6 +208,7 @@ class ProductSeeder extends Seeder
                 'price' => 79.99,
                 'sale_price' => null,
                 'sku' => 'WGM-006',
+                'category_id' => $gamingMiceCategoryId,
                 'stock_quantity' => 60,
                 'manage_stock' => true,
                 'in_stock' => true,
@@ -214,4 +239,16 @@ class ProductSeeder extends Seeder
         
         echo "Seeded " . count($products) . " products\n";
     }
-};
+    
+    /**
+     * Helper method to get category ID by name
+     */
+    private function getCategoryId(string $categoryName): ?int
+    {
+        $category = \Illuminate\Database\Capsule\Manager::table('categories')
+            ->where('name', $categoryName)
+            ->first();
+        
+        return $category ? $category->id : null;
+    }
+}

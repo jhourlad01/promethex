@@ -61,6 +61,20 @@ abstract class Seeder extends BaseSeeder
     }
 
     /**
+     * Safely clear a table (handles foreign key constraints).
+     */
+    protected function clearTable(string $table): void
+    {
+        try {
+            // Try truncate first (faster)
+            Capsule::table($table)->truncate();
+        } catch (\Exception $e) {
+            // If truncate fails due to foreign key constraints, use delete
+            Capsule::table($table)->delete();
+        }
+    }
+
+    /**
      * Run another seeder.
      */
     public function call($class, $silent = false, array $parameters = []): void

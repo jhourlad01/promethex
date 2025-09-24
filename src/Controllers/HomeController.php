@@ -14,4 +14,25 @@ class HomeController extends Controller
             'features' => app()->getEnabledFeatures()
         ], 'layout');
     }
+
+    public function dashboard()
+    {
+        return $this->view('dashboard', [
+            'title' => 'Dashboard - Promethex E-Commerce'
+        ], 'layout');
+    }
+
+    public function profile()
+    {
+        return $this->view('profile', [
+            'title' => 'Profile - Promethex E-Commerce'
+        ], 'layout');
+    }
+
+    public function account()
+    {
+        return $this->view('account', [
+            'title' => 'Account - Promethex E-Commerce'
+        ], 'layout');
+    }
 }

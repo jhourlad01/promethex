@@ -25,6 +25,7 @@ class Product extends Model
         'price',
         'sale_price',
         'sku',
+        'category_id',
         'stock_quantity',
         'manage_stock',
         'in_stock',
@@ -51,6 +52,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'sale_price' => 'decimal:2',
+        'category_id' => 'integer',
         'stock_quantity' => 'integer',
         'manage_stock' => 'boolean',
         'in_stock' => 'boolean',
@@ -64,6 +66,14 @@ class Product extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Get the category that owns the product.
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     /**
      * Get the product's display price (sale price if available, otherwise regular price).
@@ -238,6 +248,30 @@ class Product extends Model
     }
 
     /**
+     * Scope a query to only include products in a specific category.
+     */
+    public function scopeInCategory($query, int $categoryId)
+    {
+        return $query->where('category_id', $categoryId);
+    }
+
+    /**
+     * Scope a query to only include products in a category and its subcategories.
+     */
+    public function scopeInCategoryTree($query, int $categoryId)
+    {
+        $category = Category::find($categoryId);
+        if (!$category) {
+            return $query->where('category_id', $categoryId);
+        }
+        
+        $categoryIds = $category->getAllDescendantIds();
+        $categoryIds[] = $categoryId;
+        
+        return $query->whereIn('category_id', $categoryIds);
+    }
+
+    /**
      * Scope a query to search products by name or description.
      */
     public function scopeSearch($query, string $search)
@@ -371,6 +405,8 @@ class Product extends Model
             'display_price' => $this->display_price,
             'discount_percentage' => $this->discount_percentage,
             'sku' => $this->sku,
+            'category_id' => $this->category_id,
+            'category' => $this->category ? $this->category->toApiArray() : null,
             'stock_quantity' => $this->stock_quantity,
             'manage_stock' => $this->manage_stock,
             'in_stock' => $this->in_stock,
@@ -391,6 +427,8 @@ class Product extends Model
             'is_available' => $this->isAvailable(),
             'is_low_stock' => $this->isLowStock(),
             'is_out_of_stock' => $this->isOutOfStock(),
+            'url' => $this->url,
+            'breadcrumbs' => $this->breadcrumbs,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

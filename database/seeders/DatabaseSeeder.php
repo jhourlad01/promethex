@@ -15,7 +15,8 @@ class DatabaseSeeder extends Seeder
         
         $this->callMany([
             UserSeeder::class,
-            // Add more seeders here as needed
+            CategorySeeder::class,
+            ProductSeeder::class,
         ]);
         
         echo "All seeders completed!\n";

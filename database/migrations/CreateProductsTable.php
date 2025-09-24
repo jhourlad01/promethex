@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('sale_price', 10, 2)->nullable();
             $table->string('sku')->unique()->nullable();
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->integer('stock_quantity')->default(0);
             $table->boolean('manage_stock')->default(true);
             $table->boolean('in_stock')->default(true);
@@ -39,8 +40,12 @@ class CreateProductsTable extends Migration
             // Indexes
             $table->index(['status', 'featured']);
             $table->index(['price', 'status']);
+            $table->index(['category_id', 'status']);
             $table->index('slug');
             $table->index('sku');
+            
+            // Foreign key constraint
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
         });
     }
 

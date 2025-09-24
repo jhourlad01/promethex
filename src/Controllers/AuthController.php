@@ -2,30 +2,31 @@
 
 namespace App\Controllers;
 
+use Framework\Controller;
 use Framework\Request;
 use Framework\Response;
 use Framework\View;
 use Framework\Auth;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-class AuthController
+class AuthController extends Controller
 {
-    public function showLogin(Request $request): Response
+    public function showLogin(): Response
     {
-        return View::render('auth/login', [
+        return $this->view('auth/login', [
             'title' => 'Login - Promethex E-Commerce'
         ], 'layout');
     }
 
-    public function login(Request $request): Response
+    public function login(): Response
     {
-        $email = $request->getInput('email');
-        $password = $request->getInput('password');
-        $remember = $request->getInput('remember') === 'on';
+        $email = $this->request->getInput('email');
+        $password = $this->request->getInput('password');
+        $remember = $this->request->getInput('remember') === 'on';
 
         // Validate input
         if (empty($email) || empty($password)) {
-            return View::render('auth/login', [
+            return $this->view('auth/login', [
                 'title' => 'Login - Promethex E-Commerce',
                 'error' => 'Email and password are required.'
             ], 'layout');
@@ -38,7 +39,7 @@ class AuthController
             ->first();
 
         if (!$user || !password_verify($password, $user->password)) {
-            return View::render('auth/login', [
+            return $this->view('auth/login', [
                 'title' => 'Login - Promethex E-Commerce',
                 'error' => 'Invalid email or password.'
             ], 'layout');
@@ -48,12 +49,12 @@ class AuthController
         Auth::login($user, $remember);
 
         // Redirect to dashboard or home
-        return (new Response())->redirect('/');
+        return $this->redirect('/');
     }
 
-    public function logout(Request $request): Response
+    public function logout(): Response
     {
         Auth::logout();
-        return (new Response())->redirect('/');
+        return $this->redirect('/');
     }
 }

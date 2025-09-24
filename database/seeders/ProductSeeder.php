@@ -40,8 +40,8 @@ class ProductSeeder extends Seeder
                 'status' => 'active',
                 'featured' => true,
                 'images' => json_encode([
-                    '/images/products/premium-headphones-1.jpg',
-                    '/images/products/premium-headphones-2.jpg'
+                    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop'
                 ]),
                 'attributes' => json_encode([
                     'color' => 'Black',
@@ -75,8 +75,8 @@ class ProductSeeder extends Seeder
                 'status' => 'active',
                 'featured' => true,
                 'images' => json_encode([
-                    '/images/products/smart-watch-1.jpg',
-                    '/images/products/smart-watch-2.jpg'
+                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop'
                 ]),
                 'attributes' => json_encode([
                     'color' => 'Silver',
@@ -110,8 +110,8 @@ class ProductSeeder extends Seeder
                 'status' => 'active',
                 'featured' => false,
                 'images' => json_encode([
-                    '/images/products/bluetooth-speaker-1.jpg',
-                    '/images/products/bluetooth-speaker-2.jpg'
+                    'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop',
+                    'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop'
                 ]),
                 'attributes' => json_encode([
                     'color' => 'Blue',

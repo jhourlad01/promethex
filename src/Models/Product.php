@@ -163,29 +163,6 @@ class Product extends Model
         return $this->manage_stock && $this->stock_quantity <= 0;
     }
 
-    /**
-     * Get a specific attribute value.
-     */
-    public function getAttribute(string $key): mixed
-    {
-        if (is_array($this->attributes) && isset($this->attributes[$key])) {
-            return $this->attributes[$key];
-        }
-
-        return parent::getAttribute($key);
-    }
-
-    /**
-     * Set a specific attribute value.
-     */
-    public function setAttribute(string $key, mixed $value): void
-    {
-        if (is_array($this->attributes)) {
-            $this->attributes[$key] = $value;
-        } else {
-            parent::setAttribute($key, $value);
-        }
-    }
 
     /**
      * Generate a unique slug from the product name.

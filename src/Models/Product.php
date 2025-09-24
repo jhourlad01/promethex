@@ -33,6 +33,8 @@ class Product extends Model
         'featured',
         'images',
         'attributes',
+        'image_url',
+        'image_url_2',
         'weight',
         'length',
         'width',
@@ -124,11 +126,17 @@ class Product extends Model
      */
     public function getPrimaryImageAttribute(): ?string
     {
-        if (empty($this->images) || !is_array($this->images)) {
-            return null;
+        // First try to get from images JSON field
+        if (!empty($this->images) && is_array($this->images)) {
+            return $this->images[0] ?? null;
         }
-
-        return $this->images[0] ?? null;
+        
+        // Fallback to image_url field
+        if (!empty($this->image_url)) {
+            return $this->image_url;
+        }
+        
+        return null;
     }
 
     /**

@@ -118,10 +118,10 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <?php if ($product->isOnSale()): ?>
-                                <span class="h4 text-primary fw-bold mb-0">$<?= number_format($product->sale_price, 2) ?></span>
+                                <span class="h5 text-primary fw-bold mb-0">$<?= number_format($product->sale_price, 2) ?></span>
                                 <small class="text-muted text-decoration-line-through d-block">$<?= number_format($product->price, 2) ?></small>
                             <?php else: ?>
-                                <span class="h4 text-primary fw-bold mb-0">$<?= number_format($product->price, 2) ?></span>
+                                <span class="h5 text-primary fw-bold mb-0">$<?= number_format($product->price, 2) ?></span>
                             <?php endif; ?>
                             <small class="text-muted d-block">Free shipping</small>
                         </div>

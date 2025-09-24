@@ -13,9 +13,15 @@
         <div class="col-md-6 col-lg-4">
             <div class="category-card card h-100 border-0 shadow-sm">
                 <div class="card-body text-center p-5">
-                    <div class="category-icon mb-4">
-                        <i class="<?= $category->icon ?? 'fas fa-tag' ?> fa-3x text-primary"></i>
-                    </div>
+                <div class="category-image mb-4">
+                    <?php 
+                    $categoryImage = $category->image_url ?: '/public/images/categories/' . $category->slug . '.jpg';
+                    ?>
+                    <img src="<?= htmlspecialchars($categoryImage) ?>" 
+                         alt="<?= htmlspecialchars($category->name) ?>" 
+                         class="img-fluid rounded-3" 
+                         style="width: 200px; height: 150px; object-fit: cover;">
+                </div>
                     <h4 class="fw-bold mb-3"><?= htmlspecialchars($category->name) ?></h4>
                     <?php if ($category->description): ?>
                         <p class="text-muted mb-4"><?= htmlspecialchars($category->description) ?></p>

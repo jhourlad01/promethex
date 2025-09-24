@@ -356,8 +356,8 @@
                         <i class="fab fa-cc-apple-pay fs-4"></i>
                     </div>
                 </div>
-            </div>
         </div>
+    </div>
     </footer>
     
             <!-- Bootstrap JS -->

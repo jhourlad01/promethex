@@ -28,6 +28,8 @@ class CreateProductsTable extends Migration
             $table->string('status')->default('active'); // active, inactive, draft
             $table->boolean('featured')->default(false);
             $table->json('images')->nullable(); // Store image URLs as JSON
+            $table->string('image_url')->nullable(); // Primary image URL
+            $table->string('image_url_2')->nullable(); // Secondary image URL
             $table->json('attributes')->nullable(); // Store product attributes as JSON
             $table->decimal('weight', 8, 2)->nullable();
             $table->decimal('length', 8, 2)->nullable();

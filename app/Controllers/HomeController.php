@@ -29,4 +29,28 @@ class HomeController
             'content' => 'This is a modern e-commerce platform built with a custom PHP framework.'
         ], 'layout');
     }
+
+    public function dashboard(Request $request): Response
+    {
+        return View::render('dashboard', [
+            'title' => 'Dashboard - Promethex E-Commerce',
+            'user' => \Framework\Auth::user()
+        ], 'layout');
+    }
+
+    public function profile(Request $request): Response
+    {
+        return View::render('profile', [
+            'title' => 'Profile - Promethex E-Commerce',
+            'user' => \Framework\Auth::user()
+        ], 'layout');
+    }
+
+    public function account(Request $request): Response
+    {
+        return View::render('account', [
+            'title' => 'Account Settings - Promethex E-Commerce',
+            'user' => \Framework\Auth::user()
+        ], 'layout');
+    }
 }

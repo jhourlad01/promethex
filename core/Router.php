@@ -12,14 +12,14 @@ class Router
     private array $groupMiddleware = [];
     private ?Dispatcher $dispatcher = null;
 
-    public function get(string $path, $handler): self
+    public function get(string $path, $handler, array $middleware = []): self
     {
-        return $this->addRoute('GET', $path, $handler);
+        return $this->addRoute('GET', $path, $handler, $middleware);
     }
 
-    public function post(string $path, $handler): self
+    public function post(string $path, $handler, array $middleware = []): self
     {
-        return $this->addRoute('POST', $path, $handler);
+        return $this->addRoute('POST', $path, $handler, $middleware);
     }
 
     public function put(string $path, $handler): self
@@ -32,13 +32,13 @@ class Router
         return $this->addRoute('DELETE', $path, $handler);
     }
 
-    private function addRoute(string $method, string $path, $handler): self
+    private function addRoute(string $method, string $path, $handler, array $middleware = []): self
     {
         $this->routes[] = [
             'method' => $method,
             'path' => $path,
             'handler' => $handler,
-            'middleware' => array_merge($this->middleware, $this->groupMiddleware)
+            'middleware' => array_merge($this->middleware, $this->groupMiddleware, $middleware)
         ];
         return $this;
     }

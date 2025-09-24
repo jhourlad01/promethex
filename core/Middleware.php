@@ -68,6 +68,29 @@ class Middleware
         };
     }
 
+    public static function authWeb(): callable
+    {
+        return function(Request $request, $next) {
+            if (!Auth::check()) {
+                return (new Response())->redirect('/login');
+            }
+            return $next($request);
+        };
+    }
+
+    public static function authApi(): callable
+    {
+        return function(Request $request, $next) {
+            if (!Auth::check()) {
+                return (new Response())->json([
+                    'success' => false,
+                    'message' => 'Authentication required'
+                ], 401);
+            }
+            return $next($request);
+        };
+    }
+
     public static function guest(): callable
     {
         return function(Request $request, $next) {

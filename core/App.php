@@ -83,15 +83,15 @@ class App
         return array_keys($this->features);
     }
 
-    public function get(string $path, $handler): self
+    public function get(string $path, $handler, array $middleware = []): self
     {
-        $this->router->get($path, $handler);
+        $this->router->get($path, $handler, $middleware);
         return $this;
     }
 
-    public function post(string $path, $handler): self
+    public function post(string $path, $handler, array $middleware = []): self
     {
-        $this->router->post($path, $handler);
+        $this->router->post($path, $handler, $middleware);
         return $this;
     }
 

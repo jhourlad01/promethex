@@ -14,4 +14,9 @@ return function(\Framework\App $app) {
     
     // Authentication view routes (API handles the actual auth)
     $app->get('/login', [$authController, 'showLogin']);
+    
+    // Protected web routes (require authentication)
+    $app->get('/dashboard', [$homeController, 'dashboard'], [Middleware::authWeb()]);
+    $app->get('/profile', [$homeController, 'profile'], [Middleware::authWeb()]);
+    $app->get('/account', [$homeController, 'account'], [Middleware::authWeb()]);
 };

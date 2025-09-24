@@ -9,6 +9,10 @@ return function(\Framework\App $app) {
     $app->get('/category/{slug}', 'CategoryController@show');
     $app->get('/categories', 'CategoryController@index');
     
+    // GraphQL routes
+    $app->post('/graphql', 'GraphQLController@query');
+    $app->get('/graphql-playground', 'GraphQLController@playground');
+    
     // Authentication view routes (API handles the actual auth)
     $app->get('/login', 'AuthController@showLogin');
     

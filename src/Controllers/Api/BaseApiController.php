@@ -2,13 +2,12 @@
 
 namespace App\Controllers\Api;
 
-use Framework\Request;
 use Framework\Response;
 
 abstract class BaseApiController
 {
     /**
-     * Return a successful JSON response
+     * Return a successful JSON response.
      */
     protected function success(array $data = [], string $message = 'Success', int $statusCode = 200): Response
     {
@@ -20,32 +19,27 @@ abstract class BaseApiController
     }
 
     /**
-     * Return an error JSON response
+     * Return an error JSON response.
      */
-    protected function error(string $message = 'Error', int $statusCode = 400, array $errors = []): Response
+    protected function error(string $message = 'An error occurred', int $statusCode = 500, array $errors = []): Response
     {
-        $response = [
+        return (new Response())->json([
             'success' => false,
-            'message' => $message
-        ];
-
-        if (!empty($errors)) {
-            $response['errors'] = $errors;
-        }
-
-        return (new Response())->json($response, $statusCode);
+            'message' => $message,
+            'errors' => $errors
+        ], $statusCode);
     }
 
     /**
-     * Return a validation error response
+     * Return a validation error JSON response.
      */
-    protected function validationError(array $errors): Response
+    protected function validationError(array $errors, string $message = 'Validation failed'): Response
     {
-        return $this->error('Validation failed', 422, $errors);
+        return $this->error($message, 422, $errors);
     }
 
     /**
-     * Return an unauthorized response
+     * Return an unauthorized JSON response.
      */
     protected function unauthorized(string $message = 'Unauthorized'): Response
     {
@@ -53,7 +47,7 @@ abstract class BaseApiController
     }
 
     /**
-     * Return a forbidden response
+     * Return a forbidden JSON response.
      */
     protected function forbidden(string $message = 'Forbidden'): Response
     {
@@ -61,7 +55,7 @@ abstract class BaseApiController
     }
 
     /**
-     * Return a not found response
+     * Return a not found JSON response.
      */
     protected function notFound(string $message = 'Not found'): Response
     {

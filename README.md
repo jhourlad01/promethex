@@ -6,13 +6,13 @@ A modern e-commerce application built with a custom lightweight PHP framework. F
 
 ## Features
 
-- 🚀 **Lightweight Framework** - Minimal overhead with maximum performance
-- 🐕 **DataDog Integration** - Built-in monitoring, metrics, and logging
-- ⚙️ **Interactive Setup** - Automated configuration wizard
-- 🔧 **Flexible Features** - Enable/disable components as needed
-- 🛡️ **Security First** - Built-in XSS protection, validation, and authentication
-- 📊 **Comprehensive Logging** - Structured logging with multiple levels
-- 🎯 **API Ready** - RESTful routing with middleware support
+- **Lightweight Framework** - Minimal overhead with maximum performance
+- **DataDog Integration** - Built-in monitoring, metrics, and logging
+- **Interactive Setup** - Automated configuration wizard
+- **Flexible Features** - Enable/disable components as needed
+- **Security First** - Built-in XSS protection, validation, and authentication
+- **Comprehensive Logging** - Structured logging with multiple levels
+- **API Ready** - RESTful routing with middleware support
 
 ## Quick Start
 

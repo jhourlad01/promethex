@@ -270,12 +270,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link fw-medium px-3" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-medium px-3" href="/categories">Categories</a>
-                    </li>
+                    <!-- Navigation links removed - categories shown as badges on homepage -->
                 </ul>
                 <div class="navbar-nav">
                     <a class="nav-link position-relative" href="/cart">

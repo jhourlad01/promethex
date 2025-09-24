@@ -24,24 +24,49 @@
     </div>
 </div>
 
-<!-- Featured Categories -->
-<?php if (!empty($featuredCategories) && $featuredCategories->count() > 0): ?>
-<div class="container mb-5">
-    <div class="row g-4 mb-5">
-        <?php foreach ($featuredCategories as $category): ?>
-        <div class="col-md-4">
-            <div class="category-card text-center p-4 rounded-3">
-                <div class="category-icon mb-3">
-                    <i class="<?= $category->icon ?? 'fas fa-tag' ?> fa-3x text-primary"></i>
-                </div>
-                <h5 class="fw-bold"><?= htmlspecialchars($category->name) ?></h5>
-                <p class="text-muted small"><?= htmlspecialchars($category->description ?? 'Premium products') ?></p>
-            </div>
+<!-- Categories Section -->
+<?php if (!empty($allCategories) && $allCategories->count() > 0): ?>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Shop by Category</h2>
+        <p class="text-muted lead">Explore our wide range of product categories</p>
+    </div>
+    
+    <div class="row g-3 justify-content-center">
+        <?php foreach ($allCategories as $category): ?>
+        <div class="col-auto">
+            <a href="/category/<?= $category->slug ?>" class="text-decoration-none">
+                <span class="badge bg-primary bg-gradient fs-6 px-4 py-3 rounded-pill category-badge">
+                    <i class="fas fa-tag me-2"></i><?= htmlspecialchars($category->name) ?>
+                </span>
+            </a>
         </div>
         <?php endforeach; ?>
     </div>
 </div>
 <?php endif; ?>
+
+<style>
+.category-badge {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.category-badge:hover {
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.category-badge i {
+    transition: transform 0.3s ease;
+}
+
+.category-badge:hover i {
+    transform: scale(1.1);
+}
+</style>
 
 <!-- Products Section -->
 <?php if (!empty($featuredProducts) && $featuredProducts->count() > 0): ?>
@@ -120,3 +145,25 @@
     </div>
 </div>
 <?php endif; ?>
+
+<style>
+.category-badge {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.category-badge:hover {
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.category-badge i {
+    transition: transform 0.3s ease;
+}
+
+.category-badge:hover i {
+    transform: scale(1.1);
+}
+</style>

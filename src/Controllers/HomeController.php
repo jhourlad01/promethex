@@ -10,11 +10,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Get featured categories (root categories that are featured)
-        $featuredCategories = Category::where('is_featured', true)
+        // Get all active categories (not just featured)
+        $allCategories = Category::where('is_active', true)
             ->whereNull('parent_id')
             ->orderBy('sort_order')
-            ->limit(3)
             ->get();
 
         // Get featured products
@@ -32,7 +31,7 @@ class HomeController extends Controller
         return $this->view('home', [
             'title' => 'Promethex - Premium E-Commerce',
             'message' => 'Welcome to Promethex',
-            'featuredCategories' => $featuredCategories,
+            'allCategories' => $allCategories,
             'featuredProducts' => $featuredProducts,
             'totalProducts' => $totalProducts,
             'featuredProductCount' => $featuredProductCount,

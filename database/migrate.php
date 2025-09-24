@@ -16,12 +16,16 @@ Database::configure(config('database'));
 
 // Register migrations
 require_once __DIR__ . '/migrations/CreateUsersTable.php';
+require_once __DIR__ . '/migrations/CreateProductsTable.php';
 MigrationRunner::register('create_users_table', \Database\Migrations\CreateUsersTable::class);
+MigrationRunner::register('create_products_table', \Database\Migrations\CreateProductsTable::class);
 
 // Register seeders
 require_once __DIR__ . '/seeders/UserSeeder.php';
+require_once __DIR__ . '/seeders/ProductSeeder.php';
 require_once __DIR__ . '/seeders/DatabaseSeeder.php';
 SeederRunner::register('user_seeder', \Database\Seeders\UserSeeder::class);
+SeederRunner::register('product_seeder', \Database\Seeders\ProductSeeder::class);
 SeederRunner::register('database_seeder', \Database\Seeders\DatabaseSeeder::class);
 
 // Get command from CLI arguments
@@ -47,10 +51,15 @@ switch ($command) {
         SeederRunner::run();
         break;
         
-    case 'seed:user':
-        echo "Running user seeder...\n";
-        SeederRunner::runSpecificSeeder('user_seeder');
-        break;
+            case 'seed:user':
+                echo "Running user seeder...\n";
+                SeederRunner::runSpecificSeeder('user_seeder');
+                break;
+                
+            case 'seed:product':
+                echo "Running product seeder...\n";
+                SeederRunner::runSpecificSeeder('product_seeder');
+                break;
         
     case 'seed:fresh':
         echo "Running fresh seeders...\n";

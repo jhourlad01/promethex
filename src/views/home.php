@@ -60,7 +60,9 @@
                     $primaryImage = $product->primary_image;
                     $imageUrl = $primaryImage ?: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop';
                     ?>
-                    <img src="<?= htmlspecialchars($imageUrl) ?>" class="card-img-top" alt="<?= htmlspecialchars($product->name) ?>">
+                    <a href="/product/<?= $product->slug ?>">
+                        <img src="<?= htmlspecialchars($imageUrl) ?>" class="card-img-top" alt="<?= htmlspecialchars($product->name) ?>">
+                    </a>
                     <?php if ($product->isOnSale()): ?>
                     <div class="product-badge position-absolute top-0 end-0 m-3">
                         <span class="badge bg-warning text-dark">Sale</span>
@@ -80,7 +82,11 @@
                         <i class="fas fa-star text-warning"></i>
                         <span class="ms-2 text-muted small">(<?= rand(20, 200) ?> reviews)</span>
                     </div>
-                    <h5 class="card-title fw-bold mb-2"><?= htmlspecialchars($product->name) ?></h5>
+                    <h5 class="card-title fw-bold mb-2">
+                        <a href="/product/<?= $product->slug ?>" class="text-decoration-none text-dark">
+                            <?= htmlspecialchars($product->name) ?>
+                        </a>
+                    </h5>
                     <p class="card-text text-muted mb-3"><?= htmlspecialchars($product->short_description ?? $product->description) ?></p>
                 </div>
                 <div class="card-footer bg-transparent border-0 p-4 pt-0">
@@ -94,9 +100,14 @@
                             <?php endif; ?>
                             <small class="text-muted d-block">Free shipping</small>
                         </div>
-                        <button class="btn btn-primary px-4 py-2 rounded-pill">
-                            <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                        </button>
+                        <div class="d-flex gap-2">
+                            <a href="/product/<?= $product->slug ?>" class="btn btn-outline-primary px-3 py-2 rounded-pill">
+                                View Details
+                            </a>
+                            <button class="btn btn-primary px-4 py-2 rounded-pill">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

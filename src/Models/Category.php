@@ -23,7 +23,6 @@ class Category extends Model
         'description',
         'image',
         'icon',
-        'parent_id',
         'sort_order',
         'is_active',
         'is_featured',
@@ -40,53 +39,12 @@ class Category extends Model
      * The attributes that should be cast.
      */
     protected $casts = [
-        'parent_id' => 'integer',
         'sort_order' => 'integer',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    /**
-     * Get the parent category.
-     */
-    public function parent()
-    {
-        return $this->belongsTo(Category::class, 'parent_id');
-    }
-
-    /**
-     * Get the child categories.
-     */
-    public function children()
-    {
-        return $this->hasMany(Category::class, 'parent_id')->orderBy('sort_order');
-    }
-
-    /**
-     * Get all descendants (children, grandchildren, etc.).
-     */
-    public function descendants()
-    {
-        return $this->children()->with('descendants');
-    }
-
-    /**
-     * Get all ancestors (parent, grandparent, etc.).
-     */
-    public function ancestors()
-    {
-        $ancestors = collect();
-        $parent = $this->parent;
-        
-        while ($parent) {
-            $ancestors->prepend($parent);
-            $parent = $parent->parent;
-        }
-        
-        return $ancestors;
-    }
 
     /**
      * Get the products in this category.
@@ -97,55 +55,15 @@ class Category extends Model
     }
 
     /**
-     * Get all products in this category and its subcategories.
-     */
-    public function allProducts()
-    {
-        $categoryIds = $this->getAllDescendantIds();
-        $categoryIds[] = $this->id;
-        
-        return Product::whereIn('category_id', $categoryIds);
-    }
-
-    /**
-     * Get all descendant category IDs.
-     */
-    public function getAllDescendantIds(): array
-    {
-        $ids = [];
-        
-        foreach ($this->children as $child) {
-            $ids[] = $child->id;
-            $ids = array_merge($ids, $child->getAllDescendantIds());
-        }
-        
-        return $ids;
-    }
-
-    /**
      * Get the category's breadcrumb path.
      */
     public function getBreadcrumbsAttribute(): array
     {
-        $breadcrumbs = [
+        return [
             ['name' => 'Home', 'url' => '/'],
-            ['name' => 'Categories', 'url' => '/categories']
+            ['name' => 'Categories', 'url' => '/categories'],
+            ['name' => $this->name, 'url' => "/category/{$this->slug}"]
         ];
-        
-        $ancestors = $this->ancestors();
-        foreach ($ancestors as $ancestor) {
-            $breadcrumbs[] = [
-                'name' => $ancestor->name,
-                'url' => "/categories/{$ancestor->slug}"
-            ];
-        }
-        
-        $breadcrumbs[] = [
-            'name' => $this->name,
-            'url' => "/categories/{$this->slug}"
-        ];
-        
-        return $breadcrumbs;
     }
 
     /**
@@ -153,27 +71,23 @@ class Category extends Model
      */
     public function getUrlAttribute(): string
     {
-        return "/categories/{$this->slug}";
+        return "/category/{$this->slug}";
     }
 
     /**
-     * Get the category's full path (parent > child > grandchild).
+     * Get the category's full path.
      */
     public function getFullPathAttribute(): string
     {
-        $ancestors = $this->ancestors();
-        $path = $ancestors->pluck('name')->toArray();
-        $path[] = $this->name;
-        
-        return implode(' > ', $path);
+        return $this->name;
     }
 
     /**
-     * Get the category's depth level (0 for root categories).
+     * Get the category's depth level.
      */
     public function getDepthAttribute(): int
     {
-        return $this->ancestors()->count();
+        return 0;
     }
 
     /**
@@ -181,15 +95,15 @@ class Category extends Model
      */
     public function isRoot(): bool
     {
-        return $this->parent_id === null;
+        return true;
     }
 
     /**
-     * Check if the category is a leaf category (has no children).
+     * Check if the category is a leaf category.
      */
     public function isLeaf(): bool
     {
-        return $this->children()->count() === 0;
+        return true;
     }
 
     /**
@@ -232,7 +146,7 @@ class Category extends Model
      */
     public function scopeRoot($query)
     {
-        return $query->whereNull('parent_id');
+        return $query;
     }
 
     /**
@@ -240,7 +154,7 @@ class Category extends Model
      */
     public function scopeLeaf($query)
     {
-        return $query->whereDoesntHave('children');
+        return $query;
     }
 
     /**
@@ -303,20 +217,8 @@ class Category extends Model
      */
     public function moveToParent(?int $parentId): bool
     {
-        // Prevent moving to self or descendant
-        if ($parentId === $this->id) {
-            return false;
-        }
-        
-        if ($parentId) {
-            $parent = static::find($parentId);
-            if ($parent && in_array($parentId, $this->getAllDescendantIds())) {
-                return false;
-            }
-        }
-        
-        $this->parent_id = $parentId;
-        return $this->save();
+        // No parent relationships, always return true
+        return true;
     }
 
     /**
@@ -331,7 +233,7 @@ class Category extends Model
             'description' => $this->description,
             'image' => $this->image,
             'icon' => $this->icon,
-            'parent_id' => $this->parent_id,
+            'parent_id' => null,
             'sort_order' => $this->sort_order,
             'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
@@ -343,7 +245,7 @@ class Category extends Model
             'is_root' => $this->isRoot(),
             'is_leaf' => $this->isLeaf(),
             'products_count' => $this->products()->count(),
-            'children_count' => $this->children()->count(),
+            'children_count' => 0,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -257,19 +257,11 @@ class Product extends Model
     }
 
     /**
-     * Scope a query to only include products in a category and its subcategories.
+     * Scope a query to only include products in a category.
      */
     public function scopeInCategoryTree($query, int $categoryId)
     {
-        $category = Category::find($categoryId);
-        if (!$category) {
-            return $query->where('category_id', $categoryId);
-        }
-        
-        $categoryIds = $category->getAllDescendantIds();
-        $categoryIds[] = $categoryId;
-        
-        return $query->whereIn('category_id', $categoryIds);
+        return $query->where('category_id', $categoryId);
     }
 
     /**

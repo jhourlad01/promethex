@@ -6,6 +6,8 @@ return function(\Framework\App $app) {
     // Public routes
     $app->get('/', 'HomeController@index');
     $app->get('/product/{slug}', 'ProductController@show');
+    $app->get('/category/{slug}', 'CategoryController@show');
+    $app->get('/categories', 'CategoryController@index');
     
     // Authentication view routes (API handles the actual auth)
     $app->get('/login', 'AuthController@showLogin');

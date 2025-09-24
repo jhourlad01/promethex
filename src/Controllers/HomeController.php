@@ -10,9 +10,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Get all active categories (not just featured)
+        // Get all active categories
         $allCategories = Category::where('is_active', true)
-            ->whereNull('parent_id')
             ->orderBy('sort_order')
             ->get();
 

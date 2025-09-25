@@ -409,30 +409,32 @@
             <div class="row g-4">
                 <?php foreach ($relatedProducts as $relatedProduct): ?>
                 <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="product-image position-relative overflow-hidden">
-                            <img src="<?= htmlspecialchars($relatedProduct->primary_image) ?>" 
-                                 class="card-img-top" 
-                                 alt="<?= htmlspecialchars($relatedProduct->name) ?>"
-                                 style="height: 200px; object-fit: cover;">
-                            <?php if ($relatedProduct->isOnSale()): ?>
-                            <div class="product-badge position-absolute top-0 end-0 m-2">
-                                <span class="badge bg-warning text-dark">Sale</span>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="card-body p-3">
-                            <h6 class="card-title fw-bold mb-2"><?= htmlspecialchars($relatedProduct->name) ?></h6>
-                            <div class="d-flex justify-content-between align-items-center">
+                    <a href="/product/<?= $relatedProduct->slug ?>" class="text-decoration-none related-product-link">
+                        <div class="card h-100 border-0 shadow-sm related-product-card">
+                            <div class="product-image position-relative overflow-hidden">
+                                <img src="<?= htmlspecialchars($relatedProduct->primary_image) ?>" 
+                                     class="card-img-top" 
+                                     alt="<?= htmlspecialchars($relatedProduct->name) ?>"
+                                     style="height: 200px; object-fit: cover;">
                                 <?php if ($relatedProduct->isOnSale()): ?>
-                                    <span class="fw-bold text-primary">$<?= number_format($relatedProduct->sale_price, 2) ?></span>
-                                <?php else: ?>
-                                    <span class="fw-bold text-primary">$<?= number_format($relatedProduct->price, 2) ?></span>
+                                <div class="product-badge position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-warning text-dark">Sale</span>
+                                </div>
                                 <?php endif; ?>
-                                <a href="/product/<?= $relatedProduct->slug ?>" class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                            <div class="card-body p-3">
+                                <h6 class="card-title fw-bold mb-2 text-dark"><?= htmlspecialchars($relatedProduct->name) ?></h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <?php if ($relatedProduct->isOnSale()): ?>
+                                        <span class="fw-bold text-primary">$<?= number_format($relatedProduct->sale_price, 2) ?></span>
+                                    <?php else: ?>
+                                        <span class="fw-bold text-primary">$<?= number_format($relatedProduct->price, 2) ?></span>
+                                    <?php endif; ?>
+                                    <span class="btn btn-sm btn-outline-primary">View Details</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -691,5 +693,39 @@ function loadMoreReviews() {
 
 .review-summary {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Related Products Styles */
+.related-product-link {
+    display: block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.related-product-link:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.related-product-link:hover .related-product-card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.related-product-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.related-product-card:hover {
+    transform: translateY(-1px);
+}
+
+.related-product-link:hover .card-title {
+    color: #0d6efd !important;
+}
+
+.related-product-link:hover .btn-outline-primary {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
 }
 </style>

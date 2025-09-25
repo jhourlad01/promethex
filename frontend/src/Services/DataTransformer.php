@@ -54,10 +54,6 @@ class DataTransformer
                     return DataTransformer::transformCategory($value);
                 }
                 
-                if ($property === 'reviews' && is_array($value)) {
-                    return DataTransformer::transformReviews($value);
-                }
-                
                 return $value;
             }
             
@@ -144,39 +140,6 @@ class DataTransformer
                 
                 // If it's already an array, return it
                 return is_array($this->data['attributes']) ? $this->data['attributes'] : [];
-            }
-        };
-    }
-    
-    /**
-     * Transform a review array into an object-like structure
-     */
-    public static function transformReview(array $review): object
-    {
-        return new class($review) {
-            private $data;
-            
-            public function __construct(array $data) {
-                $this->data = $data;
-            }
-            
-            public function __get($property) {
-                $value = $this->data[$property] ?? null;
-                
-                // Transform nested user object
-                if ($property === 'user' && is_array($value)) {
-                    return DataTransformer::transformUser($value);
-                }
-                
-                return $value;
-            }
-            
-            public function __isset($property) {
-                return isset($this->data[$property]);
-            }
-            
-            public function toArray() {
-                return $this->data;
             }
         };
     }
@@ -345,50 +308,6 @@ class DataTransformer
             
             public function toArray() {
                 return $this->data;
-            }
-        };
-    }
-    
-    /**
-     * Transform an array of reviews into a collection-like object
-     */
-    public static function transformReviews(array $reviews): object
-    {
-        $transformed = array_map([self::class, 'transformReview'], $reviews);
-        
-        return new class($transformed) implements \IteratorAggregate, \Countable {
-            private $items;
-            
-            public function __construct(array $items) {
-                $this->items = $items;
-            }
-            
-            public function count(): int {
-                return count($this->items);
-            }
-            
-            public function getIterator(): \ArrayIterator {
-                return new \ArrayIterator($this->items);
-            }
-            
-            public function toArray() {
-                return $this->items;
-            }
-            
-            public function first() {
-                return $this->items[0] ?? null;
-            }
-            
-            public function last() {
-                return end($this->items) ?: null;
-            }
-            
-            public function isEmpty(): bool {
-                return empty($this->items);
-            }
-            
-            public function isNotEmpty(): bool {
-                return !empty($this->items);
             }
         };
     }

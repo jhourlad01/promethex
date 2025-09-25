@@ -46,8 +46,6 @@ class ProductController extends Controller
                     price
                     sale_price
                     primary_image
-                    average_rating
-                    total_reviews
                 }
             }
         ';
@@ -63,60 +61,14 @@ class ProductController extends Controller
         // Limit to 4 related products
         $relatedProducts = array_slice($relatedProducts, 0, 4);
 
-        // Get recent reviews for this product (use reviews from product data)
-        $recentReviews = $product->reviews;
-
-        // Calculate review statistics
-        $reviewStats = $this->calculateReviewStats($recentReviews);
 
         return $this->view('product/show', [
             'title' => $product->name . ' - Promethex',
             'product' => $product,
             'relatedProducts' => DataTransformer::transformProducts($relatedProducts),
-            'recentReviews' => $recentReviews,
-            'reviewStats' => $reviewStats,
             'meta_description' => $product->description ?? '',
             'meta_title' => $product->name
         ], 'layout');
     }
     
-    /**
-     * Calculate review statistics from reviews collection
-     */
-    private function calculateReviewStats($reviews): array
-    {
-        if ($reviews->isEmpty()) {
-            return [
-                'average' => 0,
-                'average_rating' => 0,
-                'total_reviews' => 0,
-                'distribution' => [0, 0, 0, 0, 0],
-                'rating_distribution' => [0, 0, 0, 0, 0]
-            ];
-        }
-        
-        $total = $reviews->count();
-        $sum = 0;
-        foreach ($reviews as $review) {
-            $sum += $review->rating;
-        }
-        $average = $sum / $total;
-        
-        // Calculate distribution
-        $distribution = [0, 0, 0, 0, 0];
-        foreach ($reviews as $review) {
-            $rating = (int)$review->rating;
-            if ($rating >= 1 && $rating <= 5) {
-                $distribution[$rating - 1]++;
-            }
-        }
-        
-        return [
-            'average' => round($average, 1),
-            'average_rating' => round($average, 1),
-            'total_reviews' => $total,
-            'distribution' => $distribution,
-            'rating_distribution' => $distribution
-        ];
-    }
 }

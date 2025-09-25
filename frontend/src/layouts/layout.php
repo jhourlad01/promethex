@@ -121,8 +121,29 @@
     </div>
     </footer>
     
-            <!-- Bootstrap JS -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (required for Parsley.js) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Parsley.js Validation Library -->
+    <script src="https://cdn.jsdelivr.net/npm/parsleyjs@2.9.2/dist/parsley.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/parsleyjs@2.9.2/dist/parsley.css">
+    
+    <script>
+    // Configure Parsley validation
+    window.Parsley.setLocale('en');
+    window.Parsley.addValidator('rating', {
+        requirementType: 'integer',
+        validateNumber: function(value, requirement) {
+            return value >= 1 && value <= 5;
+        },
+        messages: {
+            en: 'Please select a rating between 1 and 5 stars'
+        }
+    });
+    </script>
             
             <script>
             async function logout() {

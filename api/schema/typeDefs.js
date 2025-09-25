@@ -25,9 +25,6 @@ const typeDefs = gql`
     meta_title: String
     meta_description: String
     category: Category
-    reviews: [Review]
-    average_rating: Float
-    total_reviews: Int
     created_at: String
     updated_at: String
   }
@@ -44,28 +41,12 @@ const typeDefs = gql`
     updated_at: String
   }
 
-  type Review {
-    id: ID!
-    rating: Int!
-    title: String
-    comment: String
-    is_approved: Boolean
-    is_featured: Boolean
-    is_verified_purchase: Boolean
-    helpful_votes: Int
-    helpful_count: Int
-    product: Product
-    user: User
-    created_at: String
-    updated_at: String
-  }
 
   type User {
     id: ID!
     name: String!
     email: String!
     email_verified_at: String
-    reviews: [Review]
     created_at: String
     updated_at: String
   }
@@ -79,35 +60,11 @@ const typeDefs = gql`
     category(id: ID, slug: String): Category
     categories: [Category]
     
-    # Review queries
-    reviews(product_id: ID, approved: Boolean, limit: Int): [Review]
-    
     # User queries
     user(id: ID!): User
   }
 
   type Mutation {
-    # Review mutations
-    createReview(
-      product_id: ID!
-      user_id: ID!
-      rating: Int!
-      title: String
-      comment: String
-      is_verified_purchase: Boolean
-    ): Review
-    
-    updateReview(
-      id: ID!
-      rating: Int
-      title: String
-      comment: String
-    ): Review
-    
-    deleteReview(id: ID!): Boolean
-    
-    markReviewHelpful(id: ID!): Review
-    
     # Auth mutations
     login(email: String!, password: String!, remember: Boolean): String
     logout: Boolean

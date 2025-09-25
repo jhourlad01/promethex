@@ -72,32 +72,6 @@ const Query = {
     return rows;
   },
 
-  // Review queries
-  async reviews(parent, { product_id, approved = true, limit = 50 }, { db }) {
-    let query = 'SELECT * FROM reviews WHERE ';
-    let params = [];
-    
-    if (product_id) {
-      query += 'product_id = ?';
-      params.push(product_id);
-    }
-    
-    if (approved !== undefined) {
-      query += (product_id ? ' AND ' : '') + 'is_approved = ?';
-      params.push(approved);
-    }
-    
-    query += ' ORDER BY created_at DESC';
-    
-    if (limit) {
-      query += ' LIMIT ?';
-      params.push(limit);
-    }
-    
-    const [rows] = await db.execute(query, params);
-    return rows;
-  },
-
   // User queries
   async user(parent, { id }, { db }) {
     const [rows] = await db.execute('SELECT * FROM users WHERE id = ?', [id]);

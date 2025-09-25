@@ -11,7 +11,7 @@ class GraphQLClient
     
     public function __construct($apiUrl = null)
     {
-        $this->apiUrl = $apiUrl ?? Config::get('api.url', 'http://localhost:4001');
+        $this->apiUrl = $apiUrl ?? Config::get('api.url', 'http://localhost:4000');
     }
     
     /**
@@ -113,7 +113,7 @@ class GraphQLClient
     /**
      * Get featured products
      */
-    public function getFeaturedProducts(int $limit = 6)
+    public function getFeaturedProducts(int $limit = 8)
     {
         $query = '
             query GetFeaturedProducts($limit: Int) {
@@ -127,11 +127,10 @@ class GraphQLClient
                     primary_image
                     images
                     category {
+                        id
                         name
                         slug
                     }
-                    average_rating
-                    total_reviews
                 }
             }
         ';
@@ -161,8 +160,6 @@ class GraphQLClient
                         sale_price
                         primary_image
                         images
-                        average_rating
-                        total_reviews
                     }
                 }
             }
@@ -194,8 +191,8 @@ class GraphQLClient
                     featured
                     status
                     in_stock
-                    primary_image
                     images
+                    primary_image
                     attributes
                     weight
                     length
@@ -208,21 +205,8 @@ class GraphQLClient
                         name
                         slug
                     }
-                    reviews {
-                        id
-                        rating
-                        title
-                        comment
-                        is_verified_purchase
-                        helpful_votes
-                        helpful_count
-                        user {
-                            name
-                        }
-                        created_at
-                    }
-                    average_rating
-                    total_reviews
+                    created_at
+                    updated_at
                 }
             }
         ';
@@ -230,98 +214,55 @@ class GraphQLClient
         $result = $this->query($query, ['slug' => $slug]);
         $product = $result['product'] ?? null;
         
-        if ($product) {
-            return DataTransformer::transformProduct($product);
+        if (!$product) {
+            return null;
         }
         
-        return null;
+        return DataTransformer::transformProduct($product);
     }
     
     /**
-     * Get product reviews
+     * Get category by slug
      */
-    public function getProductReviews(string $productId, int $limit = 50)
+    public function getCategory(string $slug)
     {
         $query = '
-            query GetProductReviews($productId: ID!, $limit: Int) {
-                reviews(product_id: $productId, limit: $limit) {
+            query GetCategory($slug: String!) {
+                category(slug: $slug) {
                     id
-                    rating
-                    title
-                    comment
-                    is_verified_purchase
-                    helpful_votes
-                    helpful_count
-                    user {
+                    name
+                    slug
+                    description
+                    image_url
+                    product_count
+                    products {
+                        id
                         name
+                        slug
+                        description
+                        price
+                        sale_price
+                        primary_image
+                        images
                     }
-                    created_at
                 }
             }
         ';
         
-        $result = $this->query($query, ['productId' => $productId, 'limit' => $limit]);
-        $reviews = $result['reviews'] ?? [];
-        return DataTransformer::transformReviews($reviews);
-    }
-    
-    /**
-     * Create a review
-     */
-    public function createReview(array $reviewData): array
-    {
-        $query = '
-            mutation CreateReview(
-                $productId: ID!
-                $userId: ID!
-                $rating: Int!
-                $title: String
-                $comment: String
-                $isVerifiedPurchase: Boolean
-            ) {
-                createReview(
-                    product_id: $productId
-                    user_id: $userId
-                    rating: $rating
-                    title: $title
-                    comment: $comment
-                    is_verified_purchase: $isVerifiedPurchase
-                ) {
-                    id
-                    rating
-                    title
-                    comment
-                }
-            }
-        ';
+        $result = $this->query($query, ['slug' => $slug]);
+        $category = $result['category'] ?? null;
         
-        $result = $this->query($query, $reviewData);
-        return $result['createReview'] ?? [];
-    }
-    
-    /**
-     * Mark review as helpful
-     */
-    public function markReviewHelpful(string $reviewId): array
-    {
-        $query = '
-            mutation MarkReviewHelpful($id: ID!) {
-                markReviewHelpful(id: $id) {
-                    id
-                    helpful_votes
-                    helpful_count
-                }
-            }
-        ';
+        if (!$category) {
+            return null;
+        }
         
-        $result = $this->query($query, ['id' => $reviewId]);
-        return $result['markReviewHelpful'] ?? [];
+        return DataTransformer::transformCategory($category);
     }
     
     /**
-     * Login user
+     * Login user and get JWT token
      */
-    public function login(string $email, string $password, bool $remember = false): string
+    public function login(string $email, string $password, bool $remember = false): ?string
     {
         $query = '
             mutation Login($email: String!, $password: String!, $remember: Boolean) {
@@ -329,13 +270,17 @@ class GraphQLClient
             }
         ';
         
-        $result = $this->query($query, [
-            'email' => $email,
-            'password' => $password,
-            'remember' => $remember
-        ]);
-        
-        return $result['login'] ?? '';
+        try {
+            $result = $this->query($query, [
+                'email' => $email,
+                'password' => $password,
+                'remember' => $remember
+            ]);
+            
+            return $result['login'] ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
     
     /**
@@ -349,7 +294,11 @@ class GraphQLClient
             }
         ';
         
-        $result = $this->query($query);
-        return $result['logout'] ?? false;
+        try {
+            $result = $this->query($query);
+            return $result['logout'] ?? false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

@@ -43,7 +43,7 @@
                                 </div>
                             <?php endif; ?>
 
-                            <form id="loginForm" method="POST" action="/login">
+                            <form id="loginForm" method="POST" action="/login" data-parsley-validate>
                                 <div class="mb-4">
                                     <label for="email" class="form-label fw-semibold text-dark">Email Address</label>
                                     <div class="input-group input-group-lg">
@@ -57,6 +57,9 @@
                                             name="email" 
                                             placeholder="Enter your email"
                                             required
+                                            data-parsley-type="email"
+                                            data-parsley-required-message="Please enter your email address"
+                                            data-parsley-type-message="Please enter a valid email address"
                                         >
                                     </div>
                                 </div>
@@ -74,6 +77,9 @@
                                             name="password" 
                                             placeholder="Enter your password"
                                             required
+                                            data-parsley-minlength="6"
+                                            data-parsley-required-message="Please enter your password"
+                                            data-parsley-minlength-message="Password must be at least 6 characters"
                                         >
                                     </div>
                                 </div>

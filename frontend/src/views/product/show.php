@@ -15,27 +15,13 @@
             <div class="">
                 <!-- Product Title -->
                 <h1 class="display-6 fw-bold mb-3"><?= htmlspecialchars($product->name) ?></h1>
-                
-                <!-- Rating -->
-                <div class="mb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="d-flex align-items-center me-2">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                        </div>
-                        <span class="text-muted">(<?= rand(50, 500) ?> reviews)</span>
-                    </div>
-                </div>
 
                 <!-- Price -->
                 <div class="mb-4">
                     <?php if ($product->isOnSale()): ?>
                         <div class="d-flex align-items-center gap-3">
                             <span class="display-5 fw-bold text-primary">$<?= number_format($product->sale_price, 2) ?></span>
-                            <span class="h4 text-muted text-decoration-line-through">$<?= number_format($product->price, 2) ?></span>
+                            <span class="text-muted text-decoration-line-through">$<?= number_format($product->price, 2) ?></span>
                             <span class="badge bg-danger fs-6">Save <?= $product->discount_percentage ?>%</span>
                         </div>
                     <?php else: ?>
@@ -100,7 +86,7 @@
                                     <label for="quantity" class="form-label fw-bold mb-0 me-3">Quantity:</label>
                                     <div class="input-group">
                                         <button class="btn btn-outline-secondary" type="button" id="decrease-qty">-</button>
-                                        <input type="number" class="form-control text-center border" id="quantity" value="1" min="1" max="<?= $product->stock_quantity ?>">
+                                        <input type="number" class="form-control text-center border" id="quantity" value="1" min="1" max="<?= $product->stock_quantity ?>" required data-parsley-type="integer" data-parsley-min="<?= 1 ?>" data-parsley-max="<?= $product->stock_quantity ?>" data-parsley-required-message="Please enter a quantity" data-parsley-type-message="Quantity must be a number" data-parsley-min-message="Quantity must be at least 1" data-parsley-max-message="Quantity cannot exceed <?= $product->stock_quantity ?>">
                                         <button class="btn btn-outline-secondary" type="button" id="increase-qty">+</button>
                                     </div>
                                 </div>
@@ -125,20 +111,17 @@
         <div class="col-12">
             <div class="">
                 <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                    <li class="h3 nav-item" role="presentation">
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">
-                            <span class="h1 badge bg-primary">Description</span>
+                            <span class="">Description</span>
                         </button>
                     </li>
-                    <li class="h3 nav-item" role="presentation">
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" type="button" role="tab">
-                            <span class="h1 badge bg-secondary">Specifications</span>
+                            <span class="">Specifications</span>
                         </button>
                     </li>
-                    <li class="h3 nav-item" role="presentation">
-                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
-                            <span class="h1 badge bg-secondary">Reviews</span>
-                        </button>
+                    <li class="nav-item" role="presentation">
                     </li>
                 </ul>
                 
@@ -151,12 +134,8 @@
                     <!-- Specifications Tab -->
                     <div class="tab-pane fade" id="specifications" role="tabpanel">
                         <?= \Framework\View::partial('product', 'specifications', ['product' => $product]) ?>
-                    </div>
-                    
-                    <!-- Reviews Tab -->
-                    <div class="tab-pane fade" id="reviews" role="tabpanel">
-                        <?= \Framework\View::partial('product', 'reviews', ['product' => $product, 'reviewStats' => $reviewStats, 'recentReviews' => $recentReviews]) ?>
-                    </div>
+                                    </div>
+                                    
                 </div>
             </div>
         </div>
@@ -169,30 +148,34 @@
             <h3 class="fw-bold mb-4">Related Products</h3>
             <div class="row g-4">
                 <?php foreach ($relatedProducts as $relatedProduct): ?>
-                <div class="col-md-6 col-lg-3">
-                    <a href="/product/<?= $relatedProduct->slug ?>" class="text-decoration-none">
-                    <div class="card h-100 border-0 shadow-sm">
-                            <div class="position-relative overflow-hidden">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <a href="/product/<?= htmlspecialchars($relatedProduct->slug) ?>" class="text-decoration-none text-dark">
+                        <div class="card h-100 shadow-sm product-card">
+                            <div class="position-relative">
                             <img src="<?= htmlspecialchars($relatedProduct->primary_image) ?>" 
                                  class="card-img-top" 
                                      alt="<?= htmlspecialchars($relatedProduct->name) ?>">
                             <?php if ($relatedProduct->isOnSale()): ?>
-                                <div class="position-absolute top-0 end-0 m-2">
-                                <span class="badge bg-warning text-dark">Sale</span>
-                            </div>
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Sale</span>
                             <?php endif; ?>
                         </div>
-                        <div class="card-body p-3">
-                                <h6 class="card-title fw-bold mb-2 text-dark"><?= htmlspecialchars($relatedProduct->name) ?></h6>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title"><?= htmlspecialchars($relatedProduct->name) ?></h5>
+                                <p class="card-text text-muted small flex-grow-1">
+                                    <?= htmlspecialchars(substr($relatedProduct->description, 0, 100)) ?>...
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 p-3">
                             <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h5 text-primary mb-0">$<?= number_format($relatedProduct->price, 2) ?></span>
                                 <?php if ($relatedProduct->isOnSale()): ?>
-                                    <span class="fw-bold text-primary">$<?= number_format($relatedProduct->sale_price, 2) ?></span>
-                                <?php else: ?>
-                                    <span class="fw-bold text-primary">$<?= number_format($relatedProduct->price, 2) ?></span>
+                                            <small class="text-muted text-decoration-line-through d-block">$<?= number_format($relatedProduct->original_price, 2) ?></small>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
+                        </div>
                     </a>
                 </div>
                 <?php endforeach; ?>
@@ -247,10 +230,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (activeBadge) {
                 activeBadge.classList.remove('bg-secondary');
                 activeBadge.classList.add('bg-primary');
-            }
-        });
-    });
-    
+                    }
+                });
+            });
+            
     // Quantity controls
     const decreaseBtn = document.getElementById('decrease-qty');
     const increaseBtn = document.getElementById('increase-qty');
@@ -295,190 +278,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-// Review System JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    const stars = document.querySelectorAll('[data-rating]');
-    const ratingInput = document.getElementById('reviewRating');
-    
-    if (stars.length > 0 && ratingInput) {
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                const rating = parseInt(this.dataset.rating);
-                ratingInput.value = rating;
-                
-                // Update star display
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.classList.add('text-warning');
-                        s.classList.remove('text-muted');
-                    } else {
-                        s.classList.remove('text-warning');
-                        s.classList.add('text-muted');
-                    }
-                });
-            });
-            
-            star.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.dataset.rating);
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.classList.add('text-warning');
-                        s.classList.remove('text-muted');
-                    } else {
-                        s.classList.remove('text-warning');
-                        s.classList.add('text-muted');
-                    }
-                });
-            });
-        });
-        
-        // Reset stars on mouse leave
-        document.querySelector('.d-flex.gap-1').addEventListener('mouseleave', function() {
-            const currentRating = parseInt(ratingInput.value) || 0;
-            stars.forEach((s, index) => {
-                if (index < currentRating) {
-                    s.classList.add('text-warning');
-                    s.classList.remove('text-muted');
-                } else {
-                    s.classList.remove('text-warning');
-                    s.classList.add('text-muted');
-                }
-            });
-        });
-    }
-
-    const reviewForm = document.getElementById('reviewForm');
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-            const productId = document.getElementById('reviewProductId').value;
-            const rating = document.getElementById('reviewRating').value;
-            const title = document.getElementById('reviewTitle').value;
-            const comment = document.getElementById('reviewComment').value;
-            
-            if (rating === '0') {
-                alert('Please select a rating!');
-        return;
-    }
-    
-            try {
-                const response = await fetch('http://localhost:4000', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer <?= $_SESSION['jwt_token'] ?? '' ?>`
-                    },
-                    body: JSON.stringify({
-                        query: `
-                            mutation AddReview($productId: ID!, $rating: Int!, $title: String!, $comment: String!) {
-                                addReview(productId: $productId, rating: $rating, title: $title, comment: $comment) {
-                id
-                rating
-                title
-                comment
-                                    user {
-                                        name
-                                    }
-                                    created_at
-                                }
-                            }
-                        `,
-                        variables: {
-                            productId: productId,
-                            rating: parseInt(rating),
-                            title: title,
-                            comment: comment
-                        }
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.errors) {
-                    console.error('GraphQL Error:', result.errors);
-                    alert('Error submitting review: ' + result.errors[0].message);
-                } else {
-                    alert('Review submitted successfully!');
-                    resetReviewForm();
-                }
-            } catch (error) {
-                console.error('API Error:', error);
-                alert('Failed to submit review. Please try again.');
-            }
-        });
-    }
-
-    // Helpful/Unhelpful votes
-    document.querySelectorAll('.helpful-vote').forEach(button => {
-        button.addEventListener('click', async function() {
-            const reviewId = this.dataset.reviewId;
-            const voteType = this.dataset.voteType; // 'up' or 'down'
-            
-            try {
-                const response = await fetch('http://localhost:4000', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-                        'Authorization': `Bearer <?= $_SESSION['jwt_token'] ?? '' ?>`
-        },
-        body: JSON.stringify({
-                        query: `
-                            mutation RecordReviewHelpfulness($reviewId: ID!, $isHelpful: Boolean!) {
-                                recordReviewHelpfulness(reviewId: $reviewId, isHelpful: $isHelpful) {
-                                    id
-                                    helpful_votes
-                                    unhelpful_votes
-                                }
-                            }
-                        `,
-                        variables: {
-                            reviewId: reviewId,
-                            isHelpful: voteType === 'up'
-                        }
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.errors) {
-                    console.error('GraphQL Error:', result.errors);
-                    alert('Error recording helpfulness: ' + result.errors[0].message);
-                } else {
-                    // Update the UI with new vote counts
-                    const updatedReview = result.data.recordReviewHelpfulness;
-                    const upButton = this.closest('.d-flex').querySelector('[data-vote-type="up"]');
-                    const downButton = this.closest('.d-flex').querySelector('[data-vote-type="down"]');
-                    
-                    if (upButton) {
-                        upButton.innerHTML = `<i class="far fa-thumbs-up me-1"></i>Yes (${updatedReview.helpful_votes})`;
-                    }
-                    if (downButton) {
-                        downButton.innerHTML = `<i class="far fa-thumbs-down me-1"></i>No (${updatedReview.unhelpful_votes})`;
-                    }
-                }
-            } catch (error) {
-                console.error('API Error:', error);
-                alert('Failed to record helpfulness. Please try again.');
-            }
-        });
-    });
-});
-
-function resetReviewForm() {
-    document.getElementById('reviewForm').reset();
-    document.getElementById('reviewRating').value = '';
-    
-    // Reset stars
-    document.querySelectorAll('[data-rating]').forEach(star => {
-        star.classList.remove('text-warning');
-        star.classList.add('text-muted');
-    });
-}
-
-// Load more reviews (placeholder)
-function loadMoreReviews() {
-    alert('Load more reviews functionality will be implemented soon!');
-}
 </script>

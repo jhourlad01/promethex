@@ -72,22 +72,6 @@ class User extends Model
     }
 
     /**
-     * Get the user's reviews.
-     */
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
-
-    /**
-     * Get the user's approved reviews.
-     */
-    public function approvedReviews()
-    {
-        return $this->hasMany(Review::class)->where('is_approved', true);
-    }
-
-    /**
      * Check if the user is an admin.
      */
     public function isAdmin(): bool

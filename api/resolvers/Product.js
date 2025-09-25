@@ -6,30 +6,6 @@ const Product = {
     return rows[0] || null;
   },
 
-  async reviews(parent, args, { db }) {
-    const [rows] = await db.execute(
-      'SELECT * FROM reviews WHERE product_id = ? AND is_approved = true ORDER BY created_at DESC',
-      [parent.id]
-    );
-    return rows;
-  },
-
-  async average_rating(parent, args, { db }) {
-    const [rows] = await db.execute(
-      'SELECT AVG(rating) as avg_rating FROM reviews WHERE product_id = ? AND is_approved = true',
-      [parent.id]
-    );
-    return rows[0].avg_rating ? parseFloat(rows[0].avg_rating) : 0;
-  },
-
-  async total_reviews(parent, args, { db }) {
-    const [rows] = await db.execute(
-      'SELECT COUNT(*) as total FROM reviews WHERE product_id = ? AND is_approved = true',
-      [parent.id]
-    );
-    return parseInt(rows[0].total) || 0;
-  },
-
   primary_image(parent) {
     let images = parent.images;
     

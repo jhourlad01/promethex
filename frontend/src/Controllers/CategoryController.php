@@ -47,8 +47,6 @@ class CategoryController extends Controller
                         sale_price
                         primary_image
                         images
-                        average_rating
-                        total_reviews
                         featured
                         created_at
                     }

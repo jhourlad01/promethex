@@ -1,6 +1,7 @@
 const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const typeDefs = require('./schema/typeDefs');
@@ -21,11 +22,27 @@ async function startServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({
-      db,
-      req,
-      logger
-    }),
+    context: ({ req }) => {
+      // Extract user from JWT token
+      let user = null;
+      const authHeader = req.headers.authorization;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        try {
+          user = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        } catch (error) {
+          logger.warning('Invalid JWT token:', error.message);
+        }
+      }
+      
+      return {
+        db,
+        req,
+        logger,
+        user
+      };
+    },
     introspection: true,
     playground: true,
     formatError: (error) => {

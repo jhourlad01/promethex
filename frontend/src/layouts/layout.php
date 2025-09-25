@@ -36,7 +36,12 @@
                 <div class="navbar-nav">
                     <a class="nav-link position-relative" href="/cart">
                         <i class="fas fa-shopping-cart fs-5"></i>
-                        <span class="position-absolute badge rounded-pill bg-primary">3</span>
+                        <?php 
+                        $cartCount = \App\Models\Cart::getTotalItems();
+                        if ($cartCount > 0): 
+                        ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info text-danger mt-2" id="cart-count"><?= $cartCount ?></span>
+                        <?php endif; ?>
                     </a>
                     <?php if (\Framework\Auth::check()): ?>
                         <div class="nav-item dropdown ms-3">

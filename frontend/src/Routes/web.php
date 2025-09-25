@@ -12,6 +12,14 @@ return function(\Framework\App $app) {
     $app->get('/category/{slug}', 'CategoryController@show');
     $app->get('/categories', 'CategoryController@index');
     
+    // Cart routes
+    $app->get('/cart', 'CartController@index');
+    $app->post('/cart/add', 'CartController@add');
+    $app->post('/cart/update', 'CartController@update');
+    $app->post('/cart/remove', 'CartController@remove');
+    $app->post('/cart/clear', 'CartController@clear');
+    $app->get('/cart/summary', 'CartController@summary');
+    
     // Authentication routes
     $app->get('/login', 'AuthController@showLogin');
     $app->post('/login', 'AuthController@login');

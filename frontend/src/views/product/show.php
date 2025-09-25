@@ -251,31 +251,82 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add to cart functionality
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', function() {
-            const productId = this.dataset.productId;
-            const productName = this.dataset.productName;
-            const productPrice = this.dataset.productPrice;
-            const quantity = quantityInput.value;
+            const productId = this.getAttribute('data-product-id');
+            const quantity = parseInt(quantityInput.value);
             
-            // Add to cart logic here
-            console.log('Adding to cart:', {
-                productId: productId,
-                productName: productName,
-                productPrice: productPrice,
-                quantity: quantity
+            if (!productId || quantity < 1) {
+                alert('Please select a valid quantity');
+                return;
+            }
+            
+            // Disable button during request
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `product_id=${productId}&quantity=${quantity}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-success');
+                    
+                    // Update cart count in navbar
+                    updateCartCount(data.cart_summary.total_items);
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.innerHTML = originalText;
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-primary');
+                    }, 2000);
+                } else {
+                    alert('Error: ' + data.message);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the item to cart');
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
             });
-            
-            // Show success message
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
-            this.classList.remove('btn-primary');
-            this.classList.add('btn-success');
-            
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.classList.remove('btn-success');
-                this.classList.add('btn-primary');
-            }, 2000);
         });
+    }
+    
+    // Function to update cart count in navbar
+    function updateCartCount(count) {
+        const cartBadge = document.getElementById('cart-count');
+        const cartLink = document.querySelector('a[href="/cart"]');
+        
+        if (count > 0) {
+            if (cartBadge) {
+                cartBadge.textContent = count;
+            } else {
+                // Create badge if it doesn't exist
+                const badge = document.createElement('span');
+                badge.id = 'cart-count';
+                badge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary';
+                badge.textContent = count;
+                cartLink.appendChild(badge);
+            }
+        } else {
+            // Remove badge if count is 0
+            if (cartBadge) {
+                cartBadge.remove();
+            }
+        }
     }
 });
 </script>

@@ -18,36 +18,9 @@ abstract class Model extends EloquentModel
         parent::__construct($attributes);
     }
 
-    public static function find($id)
-    {
-        return static::where('id', $id)->first();
-    }
-
-    public static function all()
-    {
-        return static::get();
-    }
-
-    public static function create(array $attributes)
-    {
-        return static::query()->create($attributes);
-    }
-
-    public function update(array $attributes = [])
-    {
-        return parent::update($attributes);
-    }
-
-    public function delete()
-    {
-        return parent::delete();
-    }
-
-    public function save(array $options = [])
-    {
-        return parent::save($options);
-    }
-
+    // Remove all method overrides that might conflict with Eloquent
+    // Let Eloquent handle all the standard methods with their original signatures
+    
     protected static function boot()
     {
         parent::boot();

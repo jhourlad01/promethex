@@ -171,6 +171,57 @@ class GraphQLClient
     }
     
     /**
+     * Get single product by ID
+     */
+    public function getProductById(int $id)
+    {
+        $query = '
+            query GetProductById($id: ID!) {
+                product(id: $id) {
+                    id
+                    name
+                    slug
+                    description
+                    short_description
+                    price
+                    sale_price
+                    sku
+                    stock_quantity
+                    manage_stock
+                    featured
+                    status
+                    in_stock
+                    images
+                    primary_image
+                    attributes
+                    weight
+                    length
+                    width
+                    height
+                    meta_title
+                    meta_description
+                    category {
+                        id
+                        name
+                        slug
+                    }
+                    created_at
+                    updated_at
+                }
+            }
+        ';
+        
+        $result = $this->query($query, ['id' => $id]);
+        $product = $result['product'] ?? null;
+        
+        if (!$product) {
+            return null;
+        }
+        
+        return DataTransformer::transformProduct($product);
+    }
+    
+    /**
      * Get single product by slug
      */
     public function getProduct(string $slug)

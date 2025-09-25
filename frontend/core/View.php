@@ -124,4 +124,62 @@ class View
     {
         return self::render($template, $data, null);
     }
+    
+    /**
+     * Include a partial view - supports both global and page-specific partials
+     * Usage:
+     * - partial('breadcrumb', $data) - looks in partials/breadcrumb.php
+     * - partial('product', 'gallery', $data) - looks in product/partials/gallery.php
+     */
+    public static function partial(string $partial, $dataOrPage = [], $partialNameOrData = null): string
+    {
+        // Determine if this is a page-specific partial or global partial
+        if ($partialNameOrData !== null && is_array($partialNameOrData) && is_string($dataOrPage)) {
+            // This is a page-specific partial with data: partial('product', 'gallery', $data)
+            $page = $partial;
+            $partial = $dataOrPage;
+            $data = $partialNameOrData;
+        } elseif ($partialNameOrData !== null && is_string($partialNameOrData)) {
+            // This is a page-specific partial without data: partial('product', 'gallery')
+            $page = $partial;
+            $partial = $partialNameOrData;
+            $data = [];
+        } elseif ($partialNameOrData === null && is_string($dataOrPage) && !is_array($dataOrPage)) {
+            // This is a page-specific partial with 2 params: partial('home', 'hero')
+            $page = $partial;
+            $partial = $dataOrPage;
+            $data = [];
+        } else {
+            // This is a global partial: partial('breadcrumb', $data)
+            $page = null;
+            $data = is_array($dataOrPage) ? $dataOrPage : [];
+        }
+        
+        // Merge shared data
+        $data = array_merge(self::$sharedData, $data);
+        
+        // Extract data to variables
+        extract($data);
+        
+        // Start output buffering
+        ob_start();
+        
+        // Determine the partial path
+        if ($page !== null) {
+            // Page-specific partial
+            $partialPath = self::$viewPath . $page . '/partials/' . $partial . '.php';
+            if (!file_exists($partialPath)) {
+                throw new \RuntimeException("Page partial '{$page}/{$partial}' not found at {$partialPath}");
+            }
+        } else {
+            // Global partial
+            $partialPath = self::$viewPath . 'partials/' . $partial . '.php';
+            if (!file_exists($partialPath)) {
+                throw new \RuntimeException("Partial view '{$partial}' not found at {$partialPath}");
+            }
+        }
+        
+        include $partialPath;
+        return ob_get_clean();
+    }
 }

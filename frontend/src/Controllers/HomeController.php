@@ -28,7 +28,7 @@ class HomeController extends Controller
         $totalProducts = count($this->graphqlClient->query('query { products { id } }')['products'] ?? []);
         $featuredProductCount = count($featuredProducts);
 
-        return $this->view('home', [
+        return $this->view('home/index', [
             'title' => 'Promethex - Premium E-Commerce',
             'message' => 'Welcome to Promethex',
             'allCategories' => $allCategories,

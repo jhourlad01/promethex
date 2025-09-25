@@ -1,51 +1,11 @@
-<!-- Breadcrumbs -->
-<div class="container py-3">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
-            <?php if ($product->category): ?>
-            <li class="breadcrumb-item"><a href="/category/<?= $product->category->slug ?>" class="text-decoration-none"><?= htmlspecialchars($product->category->name) ?></a></li>
-            <?php endif; ?>
-            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($product->name) ?></li>
-        </ol>
-    </nav>
-</div>
-
 <!-- Product Details -->
 <div class="container py-5">
+    <?= \Framework\View::partial('product', 'breadcrumbs', ['product' => $product]) ?>
+    
     <div class="row g-5">
         <!-- Product Images -->
         <div class="col-lg-6">
-            <div class="product-gallery">
-                <?php if (!empty($product->images)): ?>
-                    <div class="main-image mb-3">
-                        <img src="<?= htmlspecialchars($product->primary_image) ?>" 
-                             class="img-fluid rounded-3 shadow-sm" 
-                             alt="<?= htmlspecialchars($product->name) ?>"
-                             id="mainProductImage">
-                    </div>
-                    
-                    <?php if (count($product->images) > 1): ?>
-                    <div class="thumbnail-images d-flex gap-2">
-                        <?php foreach ($product->images as $index => $image): ?>
-                        <div class="thumbnail <?= $index === 0 ? 'active' : '' ?>" 
-                             onclick="changeMainImage('<?= htmlspecialchars($image) ?>', this)">
-                            <img src="<?= htmlspecialchars($image) ?>" 
-                                 class="img-thumbnail" 
-                                 alt="<?= htmlspecialchars($product->name) ?> - Image <?= $index + 1 ?>"
-                                 style="width: 80px; height: 80px; object-fit: cover;">
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <div class="main-image mb-3">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop" 
-                             class="img-fluid rounded-3 shadow-sm" 
-                             alt="<?= htmlspecialchars($product->name) ?>">
-                    </div>
-                <?php endif; ?>
-            </div>
+            <?= \Framework\View::partial('product', 'gallery', ['product' => $product]) ?>
         </div>
 
         <!-- Product Info -->
@@ -99,25 +59,6 @@
                     <?php endif; ?>
                 </div>
 
-                <!-- Add to Cart -->
-                <div class="add-to-cart mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">-</button>
-                                <input type="number" class="form-control text-center" value="1" min="1" max="<?= $product->stock_quantity ?>" id="quantity">
-                                <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">+</button>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <button class="btn btn-primary btn-lg w-100" <?= $product->isOutOfStock() ? 'disabled' : '' ?>>
-                                <i class="fas fa-shopping-cart me-2"></i>
-                                <?= $product->isOutOfStock() ? 'Out of Stock' : 'Add to Cart' ?>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Product Features -->
                 <div class="product-features mb-4">
                     <div class="row g-3">
@@ -143,6 +84,32 @@
                             <div class="feature-item d-flex align-items-center">
                                 <i class="fas fa-headset text-primary me-2"></i>
                                 <small>24/7 Support</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity and Add to Cart -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <label for="quantity" class="form-label fw-bold mb-0 me-3">Quantity:</label>
+                                    <div class="input-group" style="width: 120px;">
+                                        <button class="btn btn-outline-secondary" type="button" id="decrease-qty">-</button>
+                                        <input type="number" class="form-control text-center border" id="quantity" value="1" min="1" max="<?= $product->stock_quantity ?>">
+                                        <button class="btn btn-outline-secondary" type="button" id="increase-qty">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                <button class="btn btn-primary btn-lg px-4" id="add-to-cart-btn" 
+                                        data-product-id="<?= $product->id ?>" 
+                                        data-product-name="<?= htmlspecialchars($product->name) ?>"
+                                        data-product-price="<?= $product->isOnSale() ? $product->sale_price : $product->price ?>">
+                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -430,7 +397,6 @@
                                     <?php else: ?>
                                         <span class="fw-bold text-primary">$<?= number_format($relatedProduct->price, 2) ?></span>
                                     <?php endif; ?>
-                                    <span class="btn btn-sm btn-outline-primary">View Details</span>
                                 </div>
                             </div>
                         </div>
@@ -470,6 +436,53 @@ function decreaseQuantity() {
         quantityInput.value = current - 1;
     }
 }
+
+// Quantity and Add to Cart JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Quantity controls
+    const decreaseBtn = document.getElementById('decrease-qty');
+    const increaseBtn = document.getElementById('increase-qty');
+    const quantityInput = document.getElementById('quantity');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    
+    if (decreaseBtn) {
+        decreaseBtn.addEventListener('click', decreaseQuantity);
+    }
+    
+    if (increaseBtn) {
+        increaseBtn.addEventListener('click', increaseQuantity);
+    }
+    
+    // Add to cart functionality
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.productName;
+            const productPrice = this.dataset.productPrice;
+            const quantity = quantityInput.value;
+            
+            // Add to cart logic here
+            console.log('Adding to cart:', {
+                productId: productId,
+                productName: productName,
+                productPrice: productPrice,
+                quantity: quantity
+            });
+            
+            // Show success message
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+            this.classList.remove('btn-primary');
+            this.classList.add('btn-success');
+            
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.classList.remove('btn-success');
+                this.classList.add('btn-primary');
+            }, 2000);
+        });
+    }
+});
 
 // Review System JavaScript
 document.addEventListener('DOMContentLoaded', function() {
@@ -651,8 +664,62 @@ function loadMoreReviews() {
 }
 </script>
 
-<!-- Review System CSS -->
+<!-- Fix Bootstrap Styling -->
 <style>
+/* Fix input borders */
+.form-control {
+    border: 1px solid #ced4da !important;
+}
+
+.form-control:focus {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Fix tabs styling */
+.nav-tabs {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent !important;
+    border-top-left-radius: 0.375rem !important;
+    border-top-right-radius: 0.375rem !important;
+    background-color: transparent !important;
+    color: #495057 !important;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6 !important;
+    background-color: #f8f9fa !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: #495057 !important;
+    background-color: #fff !important;
+    border-color: #dee2e6 #dee2e6 #fff !important;
+}
+
+/* Fix tab content */
+.tab-content {
+    border: 1px solid #dee2e6 !important;
+    border-top: none !important;
+    background-color: #fff !important;
+    padding: 1.5rem !important;
+}
+
+/* Fix buttons */
+.btn-outline-secondary {
+    border-color: #6c757d !important;
+    color: #6c757d !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+}
+
 .star-rating {
     cursor: pointer;
     font-size: 1.2rem;
@@ -664,6 +731,39 @@ function loadMoreReviews() {
 .star-rating.text-warning {
     color: #ffc107 !important;
 }
+
+.review-item {
+    transition: background-color 0.2s ease;
+}
+
+.review-item:hover {
+    background-color: #f8f9fa;
+}
+
+.reviewer-avatar {
+    flex-shrink: 0;
+}
+
+.rating-bar .progress {
+    background-color: #e9ecef;
+}
+
+.rating-bar .progress-bar {
+    background-color: #ffc107;
+}
+
+.write-review {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.review-summary {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+</style>
 
 .review-item {
     transition: background-color 0.2s ease;

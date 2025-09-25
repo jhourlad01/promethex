@@ -1,4 +1,4 @@
-<!-- Login Form -->
+<!-- Login Page -->
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
@@ -52,18 +52,11 @@
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <div class="form-check">
-                                <input 
-                                    class="form-check-input" 
-                                    type="checkbox" 
-                                    id="remember" 
-                                    name="remember"
-                                >
-                                <label class="form-check-label text-muted" for="remember">
-                                    Remember me
-                                </label>
-                            </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold" id="loginBtn">
@@ -79,43 +72,6 @@
                                 Sign up here
                             </a>
                         </p>
-                    </div>
-
-                    <div class="text-center mt-3">
-                        <a href="/forgot-password" class="text-muted small text-decoration-none">
-                            Forgot your password?
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Demo Credentials -->
-            <div class="card mt-4 border-0 bg-light">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-secondary mb-3">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Demo Credentials
-                    </h6>
-                    <div class="row">
-                        <div class="col-6">
-                            <small class="text-muted d-block">Admin User</small>
-                            <code class="small">admin@promethex.com</code>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted d-block">Password</small>
-                            <code class="small">admin123</code>
-                        </div>
-                    </div>
-                    <hr class="my-3">
-                    <div class="row">
-                        <div class="col-6">
-                            <small class="text-muted d-block">Regular User</small>
-                            <code class="small">john.doe@example.com</code>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted d-block">Password</small>
-                            <code class="small">password123</code>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -63,8 +63,8 @@ class ProductController extends Controller
         // Limit to 4 related products
         $relatedProducts = array_slice($relatedProducts, 0, 4);
 
-        // Get recent reviews for this product
-        $recentReviews = $this->graphqlClient->getProductReviews($product->id, 5);
+        // Get recent reviews for this product (use reviews from product data)
+        $recentReviews = $product->reviews;
 
         // Calculate review statistics
         $reviewStats = $this->calculateReviewStats($recentReviews);

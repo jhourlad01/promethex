@@ -97,6 +97,54 @@ class DataTransformer
                        $this->data['stock_quantity'] > 0 && 
                        $this->data['stock_quantity'] <= 10;
             }
+            
+            /**
+             * Get formatted weight
+             */
+            public function getFormattedWeight(): string
+            {
+                if (!isset($this->data['weight']) || !$this->data['weight']) {
+                    return '';
+                }
+                return number_format($this->data['weight'], 2) . ' lbs';
+            }
+            
+            /**
+             * Get formatted dimensions
+             */
+            public function getFormattedDimensions(): string
+            {
+                $dimensions = [];
+                if (isset($this->data['length']) && $this->data['length']) {
+                    $dimensions[] = number_format($this->data['length'], 2) . '"';
+                }
+                if (isset($this->data['width']) && $this->data['width']) {
+                    $dimensions[] = number_format($this->data['width'], 2) . '"';
+                }
+                if (isset($this->data['height']) && $this->data['height']) {
+                    $dimensions[] = number_format($this->data['height'], 2) . '"';
+                }
+                return implode(' × ', $dimensions);
+            }
+            
+            /**
+             * Get parsed attributes
+             */
+            public function getAttributes(): array
+            {
+                if (!isset($this->data['attributes']) || !$this->data['attributes']) {
+                    return [];
+                }
+                
+                // If attributes is a JSON string, decode it
+                if (is_string($this->data['attributes'])) {
+                    $decoded = json_decode($this->data['attributes'], true);
+                    return is_array($decoded) ? $decoded : [];
+                }
+                
+                // If it's already an array, return it
+                return is_array($this->data['attributes']) ? $this->data['attributes'] : [];
+            }
         };
     }
     

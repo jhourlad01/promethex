@@ -2,20 +2,21 @@
 // Product page gallery
 ?>
 <div class="product-gallery">
-    <div class="main-image mb-3">
+    <div class="mb-3">
         <img src="<?= htmlspecialchars($product->primary_image) ?>" 
              alt="<?= htmlspecialchars($product->name) ?>" 
-             class="img-fluid rounded shadow" 
+             class="img-fluid rounded w-100" 
              id="mainImage">
     </div>
     <?php if (!empty($product->images) && count($product->images) > 1): ?>
-        <div class="thumbnail-images d-flex gap-2">
+        <div class="row g-2">
             <?php foreach ($product->images as $index => $image): ?>
-                <img src="<?= htmlspecialchars($image) ?>" 
-                     alt="<?= htmlspecialchars($product->name) ?> - Image <?= $index + 1 ?>" 
-                     class="img-thumbnail" 
-                     style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;"
-                     onclick="document.getElementById('mainImage').src = this.src">
+                <div class="col-2">
+                    <img src="<?= htmlspecialchars($image) ?>" 
+                         alt="<?= htmlspecialchars($product->name) ?> - Image <?= $index + 1 ?>" 
+                         class="img-fluid rounded border w-100" 
+                         onclick="document.getElementById('mainImage').src = this.src">
+                </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

@@ -9,8 +9,7 @@ if (!empty($products)): ?>
                     <div class="position-relative">
                         <img src="<?= htmlspecialchars($product->primary_image) ?>" 
                              class="card-img-top" 
-                             alt="<?= htmlspecialchars($product->name) ?>"
-                             style="height: 200px; object-fit: cover;">
+                             alt="<?= htmlspecialchars($product->name) ?>">
                         <?php if ($product->isOnSale()): ?>
                             <span class="badge bg-danger position-absolute top-0 start-0 m-2">Sale</span>
                         <?php endif; ?>
@@ -37,38 +36,5 @@ if (!empty($products)): ?>
     <?php endforeach; ?>
 </div>
 
-<style>
-.product-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
-}
-
-.product-card .card-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-card .card-footer {
-    margin-top: auto;
-}
-
-/* Ensure the entire card link is clickable */
-a.text-decoration-none {
-    display: block;
-    height: 100%;
-}
-
-a.text-decoration-none:hover {
-    text-decoration: none !important;
-}
-</style>
 
 <?php endif; ?>

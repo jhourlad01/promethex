@@ -24,7 +24,7 @@ class AuthController extends Controller
     {
         return $this->view('auth/index', [
             'title' => 'Login - Promethex E-Commerce'
-        ], 'layout');
+        ], 'clean');
     }
 
     public function login(): Response
@@ -51,7 +51,7 @@ class AuthController extends Controller
             return $this->view('auth/index', [
                 'title' => 'Login - Promethex E-Commerce',
                 'error' => $validator->getFirstError('email') ?? $validator->getFirstError('password')
-            ], 'layout');
+            ], 'clean');
         }
 
         try {
@@ -77,7 +77,7 @@ class AuthController extends Controller
             return $this->view('auth/index', [
                 'title' => 'Login - Promethex E-Commerce',
                 'error' => 'Invalid email or password.'
-            ], 'layout');
+            ], 'clean');
         }
     }
 

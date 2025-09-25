@@ -185,15 +185,24 @@ class GraphQLClient
                     name
                     slug
                     description
+                    short_description
                     price
                     sale_price
                     sku
                     stock_quantity
+                    manage_stock
                     featured
                     status
                     in_stock
                     primary_image
                     images
+                    attributes
+                    weight
+                    length
+                    width
+                    height
+                    meta_title
+                    meta_description
                     category {
                         id
                         name

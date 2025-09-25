@@ -1,4 +1,6 @@
-<!-- Product Details -->
+<?php
+// Product Show Page
+?>
 <div class="container py-5">
     <?= \Framework\View::partial('product', 'breadcrumbs', ['product' => $product]) ?>
     
@@ -10,14 +12,14 @@
 
         <!-- Product Info -->
         <div class="col-lg-6">
-            <div class="product-info">
+            <div class="">
                 <!-- Product Title -->
                 <h1 class="display-6 fw-bold mb-3"><?= htmlspecialchars($product->name) ?></h1>
                 
                 <!-- Rating -->
-                <div class="product-rating mb-3">
+                <div class="mb-3">
                     <div class="d-flex align-items-center">
-                        <div class="stars me-2">
+                        <div class="d-flex align-items-center me-2">
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
@@ -29,7 +31,7 @@
                 </div>
 
                 <!-- Price -->
-                <div class="price-section mb-4">
+                <div class="mb-4">
                     <?php if ($product->isOnSale()): ?>
                         <div class="d-flex align-items-center gap-3">
                             <span class="display-5 fw-bold text-primary">$<?= number_format($product->sale_price, 2) ?></span>
@@ -43,13 +45,13 @@
 
                 <!-- Short Description -->
                 <?php if ($product->short_description): ?>
-                <div class="short-description mb-4">
+                <div class="mb-4">
                     <p class="lead text-muted"><?= htmlspecialchars($product->short_description) ?></p>
                 </div>
                 <?php endif; ?>
 
                 <!-- Stock Status -->
-                <div class="stock-status mb-4">
+                <div class="mb-4">
                     <?php if ($product->isOutOfStock()): ?>
                         <span class="badge bg-danger fs-6">Out of Stock</span>
                     <?php elseif ($product->isLowStock()): ?>
@@ -60,28 +62,28 @@
                 </div>
 
                 <!-- Product Features -->
-                <div class="product-features mb-4">
+                <div class="mb-4">
                     <div class="row g-3">
                         <div class="col-6">
-                            <div class="feature-item d-flex align-items-center">
+                            <div class="d-flex align-items-center">
                                 <i class="fas fa-shipping-fast text-primary me-2"></i>
                                 <small>Free Shipping</small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="feature-item d-flex align-items-center">
+                            <div class="d-flex align-items-center">
                                 <i class="fas fa-undo text-primary me-2"></i>
                                 <small>30-Day Returns</small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="feature-item d-flex align-items-center">
+                            <div class="d-flex align-items-center">
                                 <i class="fas fa-shield-alt text-primary me-2"></i>
                                 <small>2-Year Warranty</small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="feature-item d-flex align-items-center">
+                            <div class="d-flex align-items-center">
                                 <i class="fas fa-headset text-primary me-2"></i>
                                 <small>24/7 Support</small>
                             </div>
@@ -96,7 +98,7 @@
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center">
                                     <label for="quantity" class="form-label fw-bold mb-0 me-3">Quantity:</label>
-                                    <div class="input-group" style="width: 120px;">
+                                    <div class="input-group">
                                         <button class="btn btn-outline-secondary" type="button" id="decrease-qty">-</button>
                                         <input type="number" class="form-control text-center border" id="quantity" value="1" min="1" max="<?= $product->stock_quantity ?>">
                                         <button class="btn btn-outline-secondary" type="button" id="increase-qty">+</button>
@@ -121,21 +123,21 @@
     <!-- Product Details Tabs -->
     <div class="row mt-5">
         <div class="col-12">
-            <div class="product-tabs">
+            <div class="">
                 <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
+                    <li class="h3 nav-item" role="presentation">
                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">
-                            Description
+                            <span class="h1 badge bg-primary">Description</span>
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="h3 nav-item" role="presentation">
                         <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" type="button" role="tab">
-                            Specifications
+                            <span class="h1 badge bg-secondary">Specifications</span>
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="h3 nav-item" role="presentation">
                         <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
-                            Reviews
+                            <span class="h1 badge bg-secondary">Reviews</span>
                         </button>
                     </li>
                 </ul>
@@ -143,225 +145,17 @@
                 <div class="tab-content p-4 border border-top-0 rounded-bottom" id="productTabsContent">
                     <!-- Description Tab -->
                     <div class="tab-pane fade show active" id="description" role="tabpanel">
-                        <div class="product-description">
-                            <?php if ($product->description): ?>
-                                <p><?= nl2br(htmlspecialchars($product->description)) ?></p>
-                            <?php else: ?>
-                                <p class="text-muted">No detailed description available for this product.</p>
-                            <?php endif; ?>
-                        </div>
+                        <?= \Framework\View::partial('product', 'description', ['product' => $product]) ?>
                     </div>
                     
                     <!-- Specifications Tab -->
                     <div class="tab-pane fade" id="specifications" role="tabpanel">
-                        <div class="product-specifications">
-                            <?php if (!empty($product->attributes)): ?>
-                                <div class="row">
-                                    <?php foreach ($product->attributes as $key => $value): ?>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="spec-item">
-                                            <strong><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $key))) ?>:</strong>
-                                            <span class="text-muted ms-2"><?= htmlspecialchars($value) ?></span>
-                                        </div>
-                                    </div>
-                                    <?php endforeach; ?>
-                                </div>
-                                
-                                <?php if ($product->weight || $product->length || $product->width || $product->height): ?>
-                                <hr class="my-4">
-                                <h6 class="fw-bold mb-3">Physical Specifications</h6>
-                                <div class="row">
-                                    <?php if ($product->weight): ?>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="spec-item">
-                                            <strong>Weight:</strong>
-                                            <span class="text-muted ms-2"><?= $product->formatted_weight ?></span>
-                                        </div>
-                                    </div>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($product->formatted_dimensions): ?>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="spec-item">
-                                            <strong>Dimensions:</strong>
-                                            <span class="text-muted ms-2"><?= $product->formatted_dimensions ?></span>
-                                        </div>
-                                    </div>
-                                    <?php endif; ?>
-                                </div>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <p class="text-muted">No specifications available for this product.</p>
-                            <?php endif; ?>
-                        </div>
+                        <?= \Framework\View::partial('product', 'specifications', ['product' => $product]) ?>
                     </div>
                     
                     <!-- Reviews Tab -->
                     <div class="tab-pane fade" id="reviews" role="tabpanel">
-                        <div class="product-reviews">
-                            <?php if ($reviewStats['total_reviews'] > 0): ?>
-                                <!-- Review Summary -->
-                                <div class="row mb-4">
-                                    <div class="col-md-4">
-                                        <div class="review-summary text-center p-4 bg-light rounded">
-                                            <div class="display-4 fw-bold text-primary mb-2"><?= $reviewStats['average_rating'] ?></div>
-                                            <div class="stars mb-2">
-                                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                    <?php if ($i <= $reviewStats['average_rating']): ?>
-                                                        <i class="fas fa-star text-warning"></i>
-                                                    <?php else: ?>
-                                                        <i class="far fa-star text-warning"></i>
-                                                    <?php endif; ?>
-                                                <?php endfor; ?>
-                                            </div>
-                                            <div class="text-muted">Based on <?= $reviewStats['total_reviews'] ?> reviews</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="rating-breakdown">
-                                            <?php for ($rating = 5; $rating >= 1; $rating--): ?>
-                                                <?php 
-                                                $count = $reviewStats['rating_distribution'][$rating - 1];
-                                                $percentage = $reviewStats['total_reviews'] > 0 ? ($count / $reviewStats['total_reviews']) * 100 : 0;
-                                                ?>
-                                                <div class="rating-bar d-flex align-items-center mb-2">
-                                                    <div class="rating-label me-2" style="width: 20px;">
-                                                        <small><?= $rating ?> star<?= $rating > 1 ? 's' : '' ?></small>
-                                                    </div>
-                                                    <div class="progress flex-grow-1 me-2" style="height: 8px;">
-                                                        <div class="progress-bar bg-warning" style="width: <?= $percentage ?>%"></div>
-                                                    </div>
-                                                    <div class="rating-count" style="width: 40px;">
-                                                        <small class="text-muted"><?= $count ?></small>
-                                                    </div>
-                                                </div>
-                                            <?php endfor; ?>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Recent Reviews -->
-                                <div class="recent-reviews">
-                                    <h6 class="fw-bold mb-3">Recent Reviews</h6>
-                                    <?php foreach ($recentReviews as $review): ?>
-                                        <div class="review-item border-bottom pb-3 mb-3">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div class="reviewer-info d-flex align-items-center">
-                                                    <div class="reviewer-avatar me-3">
-                                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                            <?= $review->user->initials ?>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold"><?= htmlspecialchars($review->user->name) ?></div>
-                                                        <div class="text-muted small"><?= $review->formatted_date ?></div>
-                                                    </div>
-                                                </div>
-                                                <div class="review-rating">
-                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                        <?php if ($i <= $review->rating): ?>
-                                                            <i class="fas fa-star text-warning"></i>
-                                                        <?php else: ?>
-                                                            <i class="far fa-star text-warning"></i>
-                                                        <?php endif; ?>
-                                                    <?php endfor; ?>
-                                                </div>
-                                            </div>
-                                            
-                                            <?php if ($review->title): ?>
-                                                <h6 class="fw-bold mb-2"><?= htmlspecialchars($review->title) ?></h6>
-                                            <?php endif; ?>
-                                            
-                                            <?php if ($review->comment): ?>
-                                                <p class="text-muted mb-2"><?= nl2br(htmlspecialchars($review->comment)) ?></p>
-                                            <?php endif; ?>
-                                            
-                                            <div class="review-meta d-flex justify-content-between align-items-center">
-                                                <div class="review-badges">
-                                                    <?php if ($review->is_verified_purchase): ?>
-                                                        <span class="badge bg-success me-2">Verified Purchase</span>
-                                                    <?php endif; ?>
-                                                    <?php if ($review->is_featured): ?>
-                                                        <span class="badge bg-primary">Featured</span>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="review-helpful">
-                                                    <button class="btn btn-sm btn-outline-secondary" onclick="markHelpful(<?= $review->id ?>)">
-                                                        <i class="fas fa-thumbs-up me-1"></i>
-                                                        Helpful (<?= $review->helpful_count ?>)
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                    
-                                    <?php if ($reviewStats['total_reviews'] > 5): ?>
-                                        <div class="text-center mt-4">
-                                            <button class="btn btn-outline-primary" onclick="loadMoreReviews()">
-                                                Load More Reviews
-                                            </button>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php else: ?>
-                                <div class="text-center py-5">
-                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                    <h5 class="text-muted">No Reviews Yet</h5>
-                                    <p class="text-muted">Be the first to review this product!</p>
-                                </div>
-                            <?php endif; ?>
-
-                            <!-- Write a Review Form -->
-                            <div class="write-review mt-5 pt-4 border-top">
-                                <h6 class="fw-bold mb-3">Write a Review</h6>
-                                <form id="reviewForm" class="needs-validation" novalidate>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="reviewRating" class="form-label">Rating *</label>
-                                            <div class="rating-input">
-                                                <div class="stars d-flex gap-1">
-                                                    <i class="fas fa-star star-rating" data-rating="1"></i>
-                                                    <i class="fas fa-star star-rating" data-rating="2"></i>
-                                                    <i class="fas fa-star star-rating" data-rating="3"></i>
-                                                    <i class="fas fa-star star-rating" data-rating="4"></i>
-                                                    <i class="fas fa-star star-rating" data-rating="5"></i>
-                                                </div>
-                                                <input type="hidden" id="reviewRating" name="rating" required>
-                                                <div class="invalid-feedback">Please select a rating.</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="reviewTitle" class="form-label">Review Title</label>
-                                            <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="Summarize your review">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="reviewComment" class="form-label">Your Review *</label>
-                                        <textarea class="form-control" id="reviewComment" name="comment" rows="4" placeholder="Tell others about your experience with this product" required></textarea>
-                                        <div class="invalid-feedback">Please write a review.</div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="verifiedPurchase" name="is_verified_purchase">
-                                            <label class="form-check-label" for="verifiedPurchase">
-                                                I purchased this product
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-flex gap-2">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-paper-plane me-2"></i>Submit Review
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="resetReviewForm()">
-                                            <i class="fas fa-undo me-2"></i>Reset
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        <?= \Framework\View::partial('product', 'reviews', ['product' => $product, 'reviewStats' => $reviewStats, 'recentReviews' => $recentReviews]) ?>
                     </div>
                 </div>
             </div>
@@ -376,30 +170,29 @@
             <div class="row g-4">
                 <?php foreach ($relatedProducts as $relatedProduct): ?>
                 <div class="col-md-6 col-lg-3">
-                    <a href="/product/<?= $relatedProduct->slug ?>" class="text-decoration-none related-product-link">
-                        <div class="card h-100 border-0 shadow-sm related-product-card">
-                            <div class="product-image position-relative overflow-hidden">
-                                <img src="<?= htmlspecialchars($relatedProduct->primary_image) ?>" 
-                                     class="card-img-top" 
-                                     alt="<?= htmlspecialchars($relatedProduct->name) ?>"
-                                     style="height: 200px; object-fit: cover;">
+                    <a href="/product/<?= $relatedProduct->slug ?>" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                            <div class="position-relative overflow-hidden">
+                            <img src="<?= htmlspecialchars($relatedProduct->primary_image) ?>" 
+                                 class="card-img-top" 
+                                     alt="<?= htmlspecialchars($relatedProduct->name) ?>">
+                            <?php if ($relatedProduct->isOnSale()): ?>
+                                <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-warning text-dark">Sale</span>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="card-body p-3">
+                                <h6 class="card-title fw-bold mb-2 text-dark"><?= htmlspecialchars($relatedProduct->name) ?></h6>
+                            <div class="d-flex justify-content-between align-items-center">
                                 <?php if ($relatedProduct->isOnSale()): ?>
-                                <div class="product-badge position-absolute top-0 end-0 m-2">
-                                    <span class="badge bg-warning text-dark">Sale</span>
-                                </div>
+                                    <span class="fw-bold text-primary">$<?= number_format($relatedProduct->sale_price, 2) ?></span>
+                                <?php else: ?>
+                                    <span class="fw-bold text-primary">$<?= number_format($relatedProduct->price, 2) ?></span>
                                 <?php endif; ?>
                             </div>
-                            <div class="card-body p-3">
-                                <h6 class="card-title fw-bold mb-2 text-dark"><?= htmlspecialchars($relatedProduct->name) ?></h6>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <?php if ($relatedProduct->isOnSale()): ?>
-                                        <span class="fw-bold text-primary">$<?= number_format($relatedProduct->sale_price, 2) ?></span>
-                                    <?php else: ?>
-                                        <span class="fw-bold text-primary">$<?= number_format($relatedProduct->price, 2) ?></span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
                         </div>
+                    </div>
                     </a>
                 </div>
                 <?php endforeach; ?>
@@ -439,6 +232,25 @@ function decreaseQuantity() {
 
 // Quantity and Add to Cart JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('#productTabs button[data-bs-toggle="tab"]');
+    tabButtons.forEach(button => {
+        button.addEventListener('shown.bs.tab', function(event) {
+            // Reset all badges to secondary
+            document.querySelectorAll('#productTabs .badge').forEach(badge => {
+                badge.classList.remove('bg-primary');
+                badge.classList.add('bg-secondary');
+            });
+            
+            // Set active tab badge to primary
+            const activeBadge = event.target.querySelector('.badge');
+            if (activeBadge) {
+                activeBadge.classList.remove('bg-secondary');
+                activeBadge.classList.add('bg-primary');
+            }
+        });
+    });
+    
     // Quantity controls
     const decreaseBtn = document.getElementById('decrease-qty');
     const increaseBtn = document.getElementById('increase-qty');
@@ -486,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Review System JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    const stars = document.querySelectorAll('.star-rating');
+    const stars = document.querySelectorAll('[data-rating]');
     const ratingInput = document.getElementById('reviewRating');
     
     if (stars.length > 0 && ratingInput) {
@@ -522,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Reset stars on mouse leave
-        document.querySelector('.stars').addEventListener('mouseleave', function() {
+        document.querySelector('.d-flex.gap-1').addEventListener('mouseleave', function() {
             const currentRating = parseInt(ratingInput.value) || 0;
             stars.forEach((s, index) => {
                 if (index < currentRating) {
@@ -535,124 +347,131 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-});
 
-// Review form submission
-document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const formData = new FormData(this);
-    const reviewData = {
-        product_id: <?= $product->id ?>,
-        rating: parseInt(formData.get('rating')),
-        title: formData.get('title'),
-        comment: formData.get('comment'),
-        is_verified_purchase: formData.get('is_verified_purchase') === 'on'
-    };
-    
-    // Validate form
-    if (!reviewData.rating || !reviewData.comment.trim()) {
-        alert('Please fill in all required fields.');
+            const productId = document.getElementById('reviewProductId').value;
+            const rating = document.getElementById('reviewRating').value;
+            const title = document.getElementById('reviewTitle').value;
+            const comment = document.getElementById('reviewComment').value;
+            
+            if (rating === '0') {
+                alert('Please select a rating!');
         return;
     }
     
-    // Submit review using GraphQL
-    const mutation = `
-        mutation CreateReview($productId: ID!, $userId: ID!, $rating: Int!, $title: String, $comment: String, $isVerifiedPurchase: Boolean) {
-            createReview(
-                product_id: $productId
-                user_id: $userId
-                rating: $rating
-                title: $title
-                comment: $comment
-                is_verified_purchase: $isVerifiedPurchase
-            ) {
+            try {
+                const response = await fetch('http://localhost:4000', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer <?= $_SESSION['jwt_token'] ?? '' ?>`
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            mutation AddReview($productId: ID!, $rating: Int!, $title: String!, $comment: String!) {
+                                addReview(productId: $productId, rating: $rating, title: $title, comment: $comment) {
                 id
                 rating
                 title
                 comment
+                                    user {
+                                        name
+                                    }
+                                    created_at
+                                }
+                            }
+                        `,
+                        variables: {
+                            productId: productId,
+                            rating: parseInt(rating),
+                            title: title,
+                            comment: comment
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.errors) {
+                    console.error('GraphQL Error:', result.errors);
+                    alert('Error submitting review: ' + result.errors[0].message);
+                } else {
+                    alert('Review submitted successfully!');
+                    resetReviewForm();
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                alert('Failed to submit review. Please try again.');
             }
-        }
-    `;
-    
-    fetch('<?= \Framework\Config::get('api.url', 'http://localhost:4001') ?>', {
+        });
+    }
+
+    // Helpful/Unhelpful votes
+    document.querySelectorAll('.helpful-vote').forEach(button => {
+        button.addEventListener('click', async function() {
+            const reviewId = this.dataset.reviewId;
+            const voteType = this.dataset.voteType; // 'up' or 'down'
+            
+            try {
+                const response = await fetch('http://localhost:4000', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+                        'Authorization': `Bearer <?= $_SESSION['jwt_token'] ?? '' ?>`
         },
         body: JSON.stringify({
-            query: mutation,
-            variables: reviewData
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.data && data.data.createReview) {
-            alert('Review submitted successfully!');
-            location.reload(); // Reload page to show new review
-        } else {
-            const errorMessage = data.errors ? data.errors[0].message : 'Failed to submit review';
-            alert('Error: ' + errorMessage);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while submitting the review.');
+                        query: `
+                            mutation RecordReviewHelpfulness($reviewId: ID!, $isHelpful: Boolean!) {
+                                recordReviewHelpfulness(reviewId: $reviewId, isHelpful: $isHelpful) {
+                                    id
+                                    helpful_votes
+                                    unhelpful_votes
+                                }
+                            }
+                        `,
+                        variables: {
+                            reviewId: reviewId,
+                            isHelpful: voteType === 'up'
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.errors) {
+                    console.error('GraphQL Error:', result.errors);
+                    alert('Error recording helpfulness: ' + result.errors[0].message);
+                } else {
+                    // Update the UI with new vote counts
+                    const updatedReview = result.data.recordReviewHelpfulness;
+                    const upButton = this.closest('.d-flex').querySelector('[data-vote-type="up"]');
+                    const downButton = this.closest('.d-flex').querySelector('[data-vote-type="down"]');
+                    
+                    if (upButton) {
+                        upButton.innerHTML = `<i class="far fa-thumbs-up me-1"></i>Yes (${updatedReview.helpful_votes})`;
+                    }
+                    if (downButton) {
+                        downButton.innerHTML = `<i class="far fa-thumbs-down me-1"></i>No (${updatedReview.unhelpful_votes})`;
+                    }
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                alert('Failed to record helpfulness. Please try again.');
+            }
+        });
     });
 });
 
-// Mark review as helpful using GraphQL
-function markHelpful(reviewId) {
-    const mutation = `
-        mutation MarkReviewHelpful($id: ID!) {
-            markReviewHelpful(id: $id) {
-                id
-                helpful_votes
-                helpful_count
-            }
-        }
-    `;
-    
-    fetch('<?= \Framework\Config::get('api.url', 'http://localhost:4001') ?>', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            query: mutation,
-            variables: { id: reviewId }
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.data && data.data.markReviewHelpful) {
-            // Update helpful count
-            const button = event.target.closest('button');
-            const countText = button.querySelector('.fa-thumbs-up').nextSibling;
-            countText.textContent = ` Helpful (${data.data.markReviewHelpful.helpful_count})`;
-            
-            // Disable button to prevent multiple votes
-            button.disabled = true;
-            button.classList.add('btn-success');
-            button.classList.remove('btn-outline-secondary');
-        } else {
-            const errorMessage = data.errors ? data.errors[0].message : 'Failed to mark as helpful';
-            alert('Error: ' + errorMessage);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while marking the review as helpful.');
-    });
-}
-
-// Reset review form
 function resetReviewForm() {
     document.getElementById('reviewForm').reset();
     document.getElementById('reviewRating').value = '';
     
     // Reset stars
-    document.querySelectorAll('.star-rating').forEach(star => {
+    document.querySelectorAll('[data-rating]').forEach(star => {
         star.classList.remove('text-warning');
         star.classList.add('text-muted');
     });
@@ -663,169 +482,3 @@ function loadMoreReviews() {
     alert('Load more reviews functionality will be implemented soon!');
 }
 </script>
-
-<!-- Fix Bootstrap Styling -->
-<style>
-/* Fix input borders */
-.form-control {
-    border: 1px solid #ced4da !important;
-}
-
-.form-control:focus {
-    border-color: #86b7fe !important;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-}
-
-/* Fix tabs styling */
-.nav-tabs {
-    border-bottom: 1px solid #dee2e6 !important;
-}
-
-.nav-tabs .nav-link {
-    border: 1px solid transparent !important;
-    border-top-left-radius: 0.375rem !important;
-    border-top-right-radius: 0.375rem !important;
-    background-color: transparent !important;
-    color: #495057 !important;
-}
-
-.nav-tabs .nav-link:hover {
-    border-color: #e9ecef #e9ecef #dee2e6 !important;
-    background-color: #f8f9fa !important;
-}
-
-.nav-tabs .nav-link.active {
-    color: #495057 !important;
-    background-color: #fff !important;
-    border-color: #dee2e6 #dee2e6 #fff !important;
-}
-
-/* Fix tab content */
-.tab-content {
-    border: 1px solid #dee2e6 !important;
-    border-top: none !important;
-    background-color: #fff !important;
-    padding: 1.5rem !important;
-}
-
-/* Fix buttons */
-.btn-outline-secondary {
-    border-color: #6c757d !important;
-    color: #6c757d !important;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #6c757d !important;
-    border-color: #6c757d !important;
-    color: #fff !important;
-}
-
-.star-rating {
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #dee2e6;
-    transition: color 0.2s ease;
-}
-
-.star-rating:hover,
-.star-rating.text-warning {
-    color: #ffc107 !important;
-}
-
-.review-item {
-    transition: background-color 0.2s ease;
-}
-
-.review-item:hover {
-    background-color: #f8f9fa;
-}
-
-.reviewer-avatar {
-    flex-shrink: 0;
-}
-
-.rating-bar .progress {
-    background-color: #e9ecef;
-}
-
-.rating-bar .progress-bar {
-    background-color: #ffc107;
-}
-
-.write-review {
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-}
-
-.review-summary {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-}
-</style>
-
-.review-item {
-    transition: background-color 0.2s ease;
-}
-
-.review-item:hover {
-    background-color: #f8f9fa;
-}
-
-.reviewer-avatar {
-    flex-shrink: 0;
-}
-
-.rating-bar .progress {
-    background-color: #e9ecef;
-}
-
-.rating-bar .progress-bar {
-    background-color: #ffc107;
-}
-
-.write-review {
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-}
-
-.review-summary {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-/* Related Products Styles */
-.related-product-link {
-    display: block;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.related-product-link:hover {
-    transform: translateY(-2px);
-    text-decoration: none;
-}
-
-.related-product-link:hover .related-product-card {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.related-product-card {
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.related-product-card:hover {
-    transform: translateY(-1px);
-}
-
-.related-product-link:hover .card-title {
-    color: #0d6efd !important;
-}
-
-.related-product-link:hover .btn-outline-primary {
-    background-color: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
-}
-</style>

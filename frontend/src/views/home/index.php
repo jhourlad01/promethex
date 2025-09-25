@@ -31,4 +31,3 @@
 </div>
 <?php endif; ?>
 
-<?= \Framework\View::partial('home', 'styles') ?>

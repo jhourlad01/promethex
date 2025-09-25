@@ -22,8 +22,7 @@
         <?php if ($category->primary_image): ?>
             <img src="<?= htmlspecialchars($category->primary_image) ?>" 
                  alt="<?= htmlspecialchars($category->name) ?>" 
-                 class="img-fluid rounded shadow" 
-                 style="max-height: 200px;">
+                 class="img-fluid rounded shadow">
         <?php endif; ?>
     </div>
 </div>

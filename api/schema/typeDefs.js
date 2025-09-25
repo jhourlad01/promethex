@@ -6,15 +6,24 @@ const typeDefs = gql`
     name: String!
     slug: String!
     description: String
+    short_description: String
     price: Float!
     sale_price: Float
     sku: String
     stock_quantity: Int
+    manage_stock: Boolean
     featured: Boolean
     status: String
     in_stock: Boolean
     images: [String]
     primary_image: String
+    attributes: String
+    weight: Float
+    length: Float
+    width: Float
+    height: Float
+    meta_title: String
+    meta_description: String
     category: Category
     reviews: [Review]
     average_rating: Float

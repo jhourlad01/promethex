@@ -9,8 +9,7 @@ if (!empty($categories)): ?>
                     <div class="position-relative">
                         <img src="/public/images/categories/<?= htmlspecialchars($category->slug) ?>.jpg" 
                              class="card-img-top" 
-                             alt="<?= htmlspecialchars($category->name) ?>"
-                             style="height: 150px; object-fit: cover;">
+                             alt="<?= htmlspecialchars($category->name) ?>">
                         <div class="card-img-overlay d-flex align-items-end">
                             <div class="bg-dark bg-opacity-75 rounded p-2 w-100">
                                 <h5 class="card-title text-white mb-0"><?= htmlspecialchars($category->name) ?></h5>
@@ -26,7 +25,6 @@ if (!empty($categories)): ?>
                                 <i class="fas fa-box me-1"></i>
                                 <?= $category->product_count ?? 0 ?> products
                             </small>
-                            <span class="badge bg-primary">Shop Now</span>
                         </div>
                     </div>
                 </a>
@@ -35,18 +33,4 @@ if (!empty($categories)): ?>
     <?php endforeach; ?>
 </div>
 
-<style>
-.category-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
-}
-
-.category-card a:hover {
-    text-decoration: none !important;
-}
-</style>
 <?php endif; ?>

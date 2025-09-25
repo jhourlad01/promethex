@@ -5,6 +5,7 @@ namespace Framework;
 class View
 {
     private static string $viewPath = 'src/views/';
+    private static string $layoutPath = 'src/layouts/';
     private static array $sharedData = [];
     private static ?string $defaultLayout = 'layout';
     private static array $layoutMap = [];
@@ -17,6 +18,16 @@ class View
     public static function getViewPath(): string
     {
         return self::$viewPath;
+    }
+
+    public static function setLayoutPath(string $path): void
+    {
+        self::$layoutPath = rtrim($path, '/') . '/';
+    }
+
+    public static function getLayoutPath(): string
+    {
+        return self::$layoutPath;
     }
 
     public static function make(string $template, array $data = [], string $layout = null): string
@@ -51,9 +62,9 @@ class View
         }
         
         // Include layout with content
-        $layoutPath = self::$viewPath . $layoutToUse . '.php';
+        $layoutPath = self::$layoutPath . $layoutToUse . '.php';
         if (!file_exists($layoutPath)) {
-            throw new \RuntimeException("Layout template '{$layoutToUse}' not found");
+            throw new \RuntimeException("Layout template '{$layoutToUse}' not found at {$layoutPath}");
         }
         
         // Start output buffering for final layout

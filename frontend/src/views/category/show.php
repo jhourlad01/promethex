@@ -30,62 +30,6 @@
         </div>
     </div>
 
-    <!-- Filters and Sorting -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <h6 class="fw-bold mb-3 mb-md-0">Filter & Sort</h6>
-                        </div>
-                        <div class="col-md-6">
-                            <form method="GET" class="d-flex gap-2">
-                                <!-- Price Range -->
-                                <div class="input-group" style="width: 200px;">
-                                    <input type="number" class="form-control form-control-sm" name="price_min" 
-                                           placeholder="Min" value="<?= htmlspecialchars($priceMin ?? '') ?>" 
-                                           min="0" step="0.01">
-                                    <span class="input-group-text">-</span>
-                                    <input type="number" class="form-control form-control-sm" name="price_max" 
-                                           placeholder="Max" value="<?= htmlspecialchars($priceMax ?? '') ?>" 
-                                           min="0" step="0.01">
-                                </div>
-                                
-                                <!-- Sort Dropdown -->
-                                <select name="sort" class="form-select form-select-sm" style="width: 150px;">
-                                    <option value="newest" <?= $sortBy === 'newest' ? 'selected' : '' ?>>Newest</option>
-                                    <option value="price_low" <?= $sortBy === 'price_low' ? 'selected' : '' ?>>Price: Low to High</option>
-                                    <option value="price_high" <?= $sortBy === 'price_high' ? 'selected' : '' ?>>Price: High to Low</option>
-                                    <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Name: A to Z</option>
-                                    <option value="featured" <?= $sortBy === 'featured' ? 'selected' : '' ?>>Featured</option>
-                                </select>
-                                
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-filter me-1"></i>Apply
-                                </button>
-                                
-                                <?php if ($priceMin || $priceMax || $sortBy !== 'newest'): ?>
-                                    <a href="/category/<?= $category->slug ?>" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fas fa-times me-1"></i>Clear
-                                    </a>
-                                <?php endif; ?>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <?php if ($priceRange && ($priceRange->min_price || $priceRange->max_price)): ?>
-                    <div class="mt-3">
-                        <small class="text-muted">
-                            Price range: $<?= number_format($priceRange->min_price ?? 0, 2) ?> - $<?= number_format($priceRange->max_price ?? 0, 2) ?>
-                        </small>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Products Grid -->
     <?php if (count($products) > 0): ?>
     <div class="row g-4">

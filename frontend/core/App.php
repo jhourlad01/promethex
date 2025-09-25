@@ -3,6 +3,7 @@
 namespace Framework;
 
 use Framework\Logger;
+use Framework\Config;
 
 class App
 {
@@ -15,9 +16,20 @@ class App
 
     public function __construct()
     {
+        // Load configuration
+        $this->loadConfig();
+        
         $this->router = new Router();
-        $this->routeLoader = new RouteLoader($this, 'src/routes/');
+        $this->routeLoader = new RouteLoader($this, __DIR__ . '/../src/Routes/');
         self::$instance = $this;
+    }
+    
+    private function loadConfig(): void
+    {
+        $configPath = __DIR__ . '/../config/app.php';
+        if (file_exists($configPath)) {
+            Config::load(require $configPath);
+        }
     }
 
     public static function getInstance(): ?App

@@ -366,23 +366,15 @@
             <script>
             async function logout() {
                 try {
-                    const response = await fetch('/api/auth/logout', {
+                    const response = await fetch('/logout', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         }
                     });
                     
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        // Redirect to home page
-                        window.location.href = '/';
-                    } else {
-                        console.error('Logout failed:', result.message);
-                        // Still redirect on error
-                        window.location.href = '/';
-                    }
+                    // Always redirect to home page after logout
+                    window.location.href = '/';
                 } catch (error) {
                     console.error('Logout error:', error);
                     // Still redirect on error

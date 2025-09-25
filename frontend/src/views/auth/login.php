@@ -17,7 +17,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form id="loginForm" method="POST">
+                    <form id="loginForm" method="POST" action="/login">
                         <div class="mb-3">
                             <label for="email" class="form-label fw-medium">Email Address</label>
                             <div class="input-group">
@@ -124,84 +124,32 @@
 </div>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
+// Simple loading state for form submission
+document.getElementById('loginForm').addEventListener('submit', function(e) {
     const loginBtn = document.getElementById('loginBtn');
     const btnText = loginBtn.querySelector('.btn-text');
-    const originalText = btnText.textContent;
     
     // Show loading state
     loginBtn.disabled = true;
     btnText.textContent = 'Signing In...';
     
-    // Get form data
-    const formData = new FormData(this);
-    const data = {
-        email: formData.get('email'),
-        password: formData.get('password'),
-        remember: formData.get('remember') === 'on'
-    };
-    
-    try {
-        const mutation = `
-            mutation Login($email: String!, $password: String!, $remember: Boolean) {
-                login(email: $email, password: $password, remember: $remember)
-            }
-        `;
-        
-        const response = await fetch('/api', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                query: mutation,
-                variables: data
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Show success message
-            showAlert('success', 'Login successful! Redirecting...');
-            
-            // Redirect to home page
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 1000);
-        } else {
-            // Show error message
-            showAlert('danger', result.message);
-        }
-    } catch (error) {
-        showAlert('danger', 'An error occurred. Please try again.');
-    } finally {
-        // Reset button state
-        loginBtn.disabled = false;
-        btnText.textContent = originalText;
-    }
+    // Add spinner
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner-border spinner-border-sm me-2';
+    spinner.setAttribute('role', 'status');
+    spinner.setAttribute('aria-hidden', 'true');
+    loginBtn.insertBefore(spinner, btnText);
 });
 
-function showAlert(type, message) {
-    // Remove existing alerts
-    const existingAlert = document.querySelector('.alert');
-    if (existingAlert) {
-        existingAlert.remove();
-    }
-    
-    // Create new alert
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    // Insert after the title
-    const titleDiv = document.querySelector('.text-center.mb-4');
-    titleDiv.insertAdjacentElement('afterend', alertDiv);
-}
+// Auto-hide alerts after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            if (alert && alert.parentNode) {
+                alert.remove();
+            }
+        }, 5000);
+    });
+});
 </script>

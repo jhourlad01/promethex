@@ -41,6 +41,8 @@ class Router
             'handler' => $handler,
             'middleware' => array_merge($this->middleware, $this->groupMiddleware, $middleware)
         ];
+        
+        Logger::debug("Router: Added route {$method} {$path}");
         return $this;
     }
 

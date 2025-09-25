@@ -4,7 +4,7 @@
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
             <?php if ($product->category): ?>
-            <li class="breadcrumb-item"><a href="/categories/<?= $product->category->slug ?>" class="text-decoration-none"><?= htmlspecialchars($product->category->name) ?></a></li>
+            <li class="breadcrumb-item"><a href="/category/<?= $product->category->slug ?>" class="text-decoration-none"><?= htmlspecialchars($product->category->name) ?></a></li>
             <?php endif; ?>
             <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($product->name) ?></li>
         </ol>
@@ -562,7 +562,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
         }
     `;
     
-    fetch('/api', {
+    fetch('<?= \Framework\Config::get('api.url', 'http://localhost:4001') ?>', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -600,7 +600,7 @@ function markHelpful(reviewId) {
         }
     `;
     
-    fetch('/api', {
+    fetch('<?= \Framework\Config::get('api.url', 'http://localhost:4001') ?>', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

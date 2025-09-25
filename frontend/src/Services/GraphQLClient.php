@@ -3,14 +3,15 @@
 namespace App\Services;
 
 use App\Services\DataTransformer;
+use Framework\Config;
 
 class GraphQLClient
 {
     private $apiUrl;
     
-    public function __construct($apiUrl = 'http://localhost:4000')
+    public function __construct($apiUrl = null)
     {
-        $this->apiUrl = $apiUrl;
+        $this->apiUrl = $apiUrl ?? Config::get('api.url', 'http://localhost:4001');
     }
     
     /**

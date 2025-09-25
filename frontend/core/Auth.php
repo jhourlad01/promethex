@@ -2,6 +2,8 @@
 
 namespace Framework;
 
+// Removed Firebase JWT dependency - using simple session storage
+
 class Auth
 {
     private static $user = null;
@@ -77,6 +79,7 @@ class Auth
     public static function logout(): void
     {
         unset($_SESSION[self::$sessionKey]);
+        unset($_SESSION['jwt_token']);
         unset($_SESSION['remember_me']);
         self::$user = null;
     }

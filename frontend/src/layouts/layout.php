@@ -65,6 +65,10 @@
                             <i class="fas fa-sign-in-alt fs-5"></i>
                             <span class="ms-1">Login</span>
                         </a>
+                        <a class="nav-link ms-2" href="/register">
+                            <i class="fas fa-user-plus fs-5"></i>
+                            <span class="ms-1">Register</span>
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>

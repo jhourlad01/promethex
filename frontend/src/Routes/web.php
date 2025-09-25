@@ -23,6 +23,9 @@ return function(\Framework\App $app) {
     // Authentication routes
     $app->get('/login', 'AuthController@showLogin');
     $app->post('/login', 'AuthController@login');
+    $app->get('/register', 'RegisterController@show');
+    $app->post('/register', 'RegisterController@register');
+    $app->get('/verify-email', 'EmailVerificationController@verify');
     $app->post('/logout', 'AuthController@logout');
     
     // Protected web routes (require authentication)

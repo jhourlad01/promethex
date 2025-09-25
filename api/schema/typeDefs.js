@@ -47,8 +47,20 @@ const typeDefs = gql`
     name: String!
     email: String!
     email_verified_at: String
+    email_verification_token: String
     created_at: String
     updated_at: String
+  }
+
+  type AuthPayload {
+    token: String!
+    user: User!
+    message: String!
+  }
+
+  type RegisterPayload {
+    user: User!
+    message: String!
   }
 
   type Query {
@@ -66,6 +78,8 @@ const typeDefs = gql`
 
   type Mutation {
     # Auth mutations
+    register(name: String!, email: String!, password: String!): RegisterPayload!
+    verifyEmail(token: String!): AuthPayload!
     login(email: String!, password: String!, remember: Boolean): String
     logout: Boolean
   }

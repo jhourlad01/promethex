@@ -1,5 +1,25 @@
 <?= \Framework\View::partial('home', 'hero') ?>
 
+<?php if (isset($_GET['verified']) && $_GET['verified'] == '1'): ?>
+<div class="container mt-4">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Email Verified!</strong> Your account has been activated successfully. Welcome to Promethex!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (isset($_GET['registered']) && $_GET['registered'] == '1'): ?>
+<div class="container mt-4">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Welcome to Promethex!</strong> Your account has been created successfully. You can now start shopping!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- Categories Section -->
 <?php if (!empty($allCategories) && $allCategories->count() > 0): ?>
 <div class="container py-5">

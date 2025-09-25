@@ -23,7 +23,10 @@ class AuthController extends Controller
     public function showLogin(): Response
     {
         return $this->view('auth/index', [
-            'title' => 'Login - Promethex E-Commerce'
+            'title' => 'Login - Promethex E-Commerce',
+            'header_title' => 'Welcome Back',
+            'header_subtitle' => 'Sign in to your Promethex account',
+            'header_icon' => 'fas fa-store'
         ], 'clean');
     }
 
@@ -50,6 +53,9 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return $this->view('auth/index', [
                 'title' => 'Login - Promethex E-Commerce',
+                'header_title' => 'Welcome Back',
+                'header_subtitle' => 'Sign in to your Promethex account',
+                'header_icon' => 'fas fa-store',
                 'error' => $validator->getFirstError('email') ?? $validator->getFirstError('password')
             ], 'clean');
         }
@@ -76,6 +82,9 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return $this->view('auth/index', [
                 'title' => 'Login - Promethex E-Commerce',
+                'header_title' => 'Welcome Back',
+                'header_subtitle' => 'Sign in to your Promethex account',
+                'header_icon' => 'fas fa-store',
                 'error' => 'Invalid email or password.'
             ], 'clean');
         }

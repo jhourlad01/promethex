@@ -333,6 +333,65 @@ class GraphQLClient
             return null;
         }
     }
+
+    public function register(string $name, string $email, string $password): ?array
+    {
+        $query = '
+            mutation Register($name: String!, $email: String!, $password: String!) {
+                register(name: $name, email: $email, password: $password) {
+                    user {
+                        id
+                        name
+                        email
+                        email_verification_token
+                        created_at
+                    }
+                    message
+                }
+            }
+        ';
+        
+        try {
+            $result = $this->query($query, [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password
+            ]);
+            
+            return $result['register'] ?? null;
+        } catch (\Exception $e) {
+            throw $e; // Re-throw to handle in controller
+        }
+    }
+
+    public function verifyEmail(string $token): ?array
+    {
+        $query = '
+            mutation VerifyEmail($token: String!) {
+                verifyEmail(token: $token) {
+                    token
+                    user {
+                        id
+                        name
+                        email
+                        email_verified_at
+                        created_at
+                    }
+                    message
+                }
+            }
+        ';
+        
+        try {
+            $result = $this->query($query, [
+                'token' => $token
+            ]);
+            
+            return $result['verifyEmail'] ?? null;
+        } catch (\Exception $e) {
+            throw $e; // Re-throw to handle in controller
+        }
+    }
     
     /**
      * Logout user

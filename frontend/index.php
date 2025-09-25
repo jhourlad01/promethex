@@ -3,13 +3,17 @@
 require_once 'vendor/autoload.php';
 require_once 'core/helpers.php';
 
-use Framework\{App, Config, FeatureManager, Env};
+use Framework\{App, Config, FeatureManager, Env, ExceptionHandler};
 
 // Load environment variables
 Env::load('.env');
 
 // Load configuration
 Config::load(require 'config/app.php');
+
+// Register centralized exception handler
+$debugMode = config('app.debug', false);
+ExceptionHandler::register($debugMode);
 
 // Load layout configuration
 $layoutConfig = require 'config/layouts.php';
@@ -42,10 +46,12 @@ $app->configure(['features' => $enabledFeatures]);
 
 // Configure logging with environment variables
 if ($app->hasFeature('logging')) {
+    // error_log("Configuring logging...");
     \Framework\Logger::configure(
         config('logging.file'),
         config('logging.level')
     );
+    // error_log("Logging configured");
 }
 
 // Configure database with environment variables

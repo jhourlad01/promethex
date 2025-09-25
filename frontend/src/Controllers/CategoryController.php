@@ -5,11 +5,19 @@ namespace App\Controllers;
 use Framework\Controller;
 use Framework\Request;
 use Framework\Response;
-use App\Models\Category;
-use App\Models\Product;
+use App\Services\GraphQLClient;
+use App\Services\DataTransformer;
 
 class CategoryController extends Controller
 {
+    private $graphqlClient;
+    
+    public function __construct(Request $request, array $params = [])
+    {
+        parent::__construct($request, $params);
+        $this->graphqlClient = new GraphQLClient();
+    }
+    
     /**
      * Show products in a specific category
      */
@@ -21,10 +29,35 @@ class CategoryController extends Controller
             return $this->redirect('/');
         }
 
-        // Find category by slug
-        $category = Category::where('slug', $slug)
-            ->where('is_active', true)
-            ->first();
+        // Get category and products from GraphQL API
+        $query = '
+            query GetCategoryWithProducts($slug: String!) {
+                category(slug: $slug) {
+                    id
+                    name
+                    slug
+                    description
+                    image_url
+                    products {
+                        id
+                        name
+                        slug
+                        description
+                        price
+                        sale_price
+                        primary_image
+                        images
+                        average_rating
+                        total_reviews
+                        featured
+                        created_at
+                    }
+                }
+            }
+        ';
+        
+        $result = $this->graphqlClient->query($query, ['slug' => $slug]);
+        $category = $result['category'] ?? null;
 
         if (!$category) {
             return $this->view('errors/404', [
@@ -37,70 +70,80 @@ class CategoryController extends Controller
         $sortBy = $this->request->getInput('sort', 'newest');
         $priceMin = $this->request->getInput('price_min');
         $priceMax = $this->request->getInput('price_max');
-        $page = (int) $this->request->getInput('page', 1);
-        $perPage = 12;
 
-        // Build product query - only products from this specific category
-        $query = Product::where('status', 'active')
-            ->where('in_stock', true)
-            ->where('category_id', $category->id);
-
+        // Apply client-side filtering and sorting
+        $products = $category['products'] ?? [];
+        
         // Apply price filters
         if ($priceMin !== null && is_numeric($priceMin)) {
-            $query->where('price', '>=', $priceMin);
+            $products = array_filter($products, function($product) use ($priceMin) {
+                return $product['price'] >= $priceMin;
+            });
         }
         if ($priceMax !== null && is_numeric($priceMax)) {
-            $query->where('price', '<=', $priceMax);
+            $products = array_filter($products, function($product) use ($priceMax) {
+                return $product['price'] <= $priceMax;
+            });
         }
 
         // Apply sorting
         switch ($sortBy) {
             case 'price_low':
-                $query->orderBy('price', 'asc');
+                usort($products, function($a, $b) {
+                    return $a['price'] <=> $b['price'];
+                });
                 break;
             case 'price_high':
-                $query->orderBy('price', 'desc');
+                usort($products, function($a, $b) {
+                    return $b['price'] <=> $a['price'];
+                });
                 break;
             case 'name':
-                $query->orderBy('name', 'asc');
+                usort($products, function($a, $b) {
+                    return strcmp($a['name'], $b['name']);
+                });
                 break;
             case 'featured':
-                $query->orderBy('featured', 'desc')->orderBy('created_at', 'desc');
+                usort($products, function($a, $b) {
+                    if ($a['featured'] == $b['featured']) {
+                        return strtotime($b['created_at']) - strtotime($a['created_at']);
+                    }
+                    return $b['featured'] - $a['featured'];
+                });
                 break;
             case 'newest':
             default:
-                $query->orderBy('created_at', 'desc');
+                usort($products, function($a, $b) {
+                    return strtotime($b['created_at']) - strtotime($a['created_at']);
+                });
                 break;
         }
-
-        // Get products (without pagination for now)
-        $products = $query->get();
 
         // Get breadcrumbs
         $breadcrumbs = [
             ['name' => 'Home', 'url' => '/'],
             ['name' => 'Categories', 'url' => '/categories'],
-            ['name' => $category->name, 'url' => '/category/' . $category->slug]
+            ['name' => $category['name'], 'url' => '/category/' . $category['slug']]
         ];
 
-        // Get price range for filters
-        $priceRange = Product::where('status', 'active')
-            ->where('in_stock', true)
-            ->where('category_id', $category->id)
-            ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
-            ->first();
+        // Calculate price range
+        $prices = array_column($products, 'price');
+        $priceRange = [
+            'min_price' => !empty($prices) ? min($prices) : 0,
+            'max_price' => !empty($prices) ? max($prices) : 0
+        ];
 
         return $this->view('category/show', [
-            'title' => $category->name . ' - Promethex',
-            'category' => $category,
-            'products' => $products,
+            'title' => $category['name'] . ' - Promethex',
+            'category' => DataTransformer::transformCategory($category),
+            'products' => DataTransformer::transformProducts($products),
             'breadcrumbs' => $breadcrumbs,
             'sortBy' => $sortBy,
             'priceMin' => $priceMin,
             'priceMax' => $priceMax,
-            'priceRange' => $priceRange,
-            'meta_description' => $category->meta_description ?? $category->description,
-            'meta_title' => $category->meta_title ?? $category->name
+            'priceRange' => DataTransformer::transformPriceRange($priceRange),
+            'meta_description' => $category['description'] ?? '',
+            'meta_title' => $category['name']
         ], 'layout');
     }
 
@@ -109,9 +152,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
+        $categories = $this->graphqlClient->getCategories();
 
         return $this->view('category/index', [
             'title' => 'All Categories - Promethex',

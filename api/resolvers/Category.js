@@ -12,7 +12,7 @@ const Category = {
       'SELECT COUNT(*) as count FROM products WHERE category_id = ? AND status = "active"',
       [parent.id]
     );
-    return rows[0].count;
+    return parseInt(rows[0].count) || 0;
   }
 };
 

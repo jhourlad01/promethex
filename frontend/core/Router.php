@@ -4,6 +4,7 @@ namespace Framework;
 
 use FastRoute\RouteCollector;
 use FastRoute\Dispatcher;
+use Framework\Logger;
 
 class Router
 {
@@ -65,24 +66,53 @@ class Router
 
     public function dispatch(Request $request): Response
     {
+        $startTime = microtime(true);
+        
+        Logger::debug("Router dispatch started", [
+            'method' => $request->getMethod(),
+            'path' => $request->getPath()
+        ]);
+        
         if ($this->dispatcher === null) {
+            Logger::debug("Creating dispatcher");
             $this->dispatcher = \FastRoute\simpleDispatcher(function(RouteCollector $r) {
                 foreach ($this->routes as $route) {
+                    Logger::debug("Adding route", [
+                        'method' => $route['method'],
+                        'path' => $route['path']
+                    ]);
                     $r->addRoute($route['method'], $route['path'], $route);
                 }
             });
         }
 
         $routeInfo = $this->dispatcher->dispatch($request->getMethod(), $request->getPath());
+        
+        Logger::debug("Route dispatch result", [
+            'route_info' => $routeInfo,
+            'request_path' => $request->getPath()
+        ]);
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
+                Logger::warning("Route not found", [
+                    'method' => $request->getMethod(),
+                    'path' => $request->getPath()
+                ]);
                 return new Response('Not Found', 404);
             case Dispatcher::METHOD_NOT_ALLOWED:
+                Logger::warning("Method not allowed", [
+                    'method' => $request->getMethod(),
+                    'path' => $request->getPath()
+                ]);
                 return new Response('Method Not Allowed', 405);
             case Dispatcher::FOUND:
                 $route = $routeInfo[1];
                 $vars = $routeInfo[2];
+                Logger::debug("Route found", [
+                    'route' => $route,
+                    'vars' => $vars
+                ]);
                 return $this->executeHandler($route['handler'], $request, $route['middleware'], $vars);
         }
     }
@@ -99,6 +129,11 @@ class Router
                 $controllerClass = "App\\Controllers\\{$controller}";
                 
                 if (class_exists($controllerClass)) {
+                    Logger::debug("Creating controller", [
+                        'controller' => $controllerClass,
+                        'method' => $method,
+                        'vars' => $vars
+                    ]);
                     $controllerInstance = new $controllerClass($request, $vars);
                     return $controllerInstance->$method();
                 }

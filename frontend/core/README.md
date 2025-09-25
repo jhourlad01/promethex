@@ -1,4 +1,4 @@
-# Framework Core
+# Projedee Framework Core
 
 A custom lightweight PHP framework with essential features for building web applications, featuring integrated monitoring via DataDog AI and a flexible setup system.
 

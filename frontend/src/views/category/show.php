@@ -24,7 +24,7 @@
                     <p class="lead text-muted mb-4"><?= htmlspecialchars($category->description) ?></p>
                 <?php endif; ?>
                 <div class="category-stats">
-                    <span class="badge bg-primary fs-6"><?= $products->count() ?> Products</span>
+                    <span class="badge bg-primary fs-6"><?= count($products) ?> Products</span>
                 </div>
             </div>
         </div>
@@ -87,7 +87,7 @@
     </div>
 
     <!-- Products Grid -->
-    <?php if ($products->count() > 0): ?>
+    <?php if (count($products) > 0): ?>
     <div class="row g-4">
         <?php foreach ($products as $product): ?>
         <div class="col-md-6 col-lg-4 col-xl-3">
@@ -124,7 +124,7 @@
                             <?= htmlspecialchars($product->name) ?>
                         </a>
                     </h5>
-                    <p class="card-text text-muted mb-3"><?= htmlspecialchars($product->short_description ?? $product->description) ?></p>
+                    <p class="card-text text-muted mb-3"><?= htmlspecialchars($product->description) ?></p>
                 </div>
                 <div class="card-footer bg-transparent border-0 p-4 pt-0">
                     <div class="d-flex justify-content-between align-items-center">

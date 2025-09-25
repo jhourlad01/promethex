@@ -3,29 +3,30 @@
 namespace App\Controllers;
 
 use Framework\Controller;
-use App\Models\Category;
-use App\Models\Product;
+use Framework\Request;
+use App\Services\GraphQLClient;
 
 class HomeController extends Controller
 {
+    private $graphqlClient;
+    
+    public function __construct(Request $request, array $params = [])
+    {
+        parent::__construct($request, $params);
+        $this->graphqlClient = new GraphQLClient();
+    }
+    
     public function index()
     {
-        // Get all active categories
-        $allCategories = Category::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
+        // Get all active categories from GraphQL API
+        $allCategories = $this->graphqlClient->getCategories();
 
-        // Get featured products
-        $featuredProducts = Product::where('featured', true)
-            ->where('status', 'active')
-            ->where('in_stock', true)
-            ->orderBy('created_at', 'desc')
-            ->limit(6)
-            ->get();
+        // Get featured products from GraphQL API
+        $featuredProducts = $this->graphqlClient->getFeaturedProducts(6);
 
-        // Get product counts for hero stats
-        $totalProducts = Product::where('status', 'active')->count();
-        $featuredProductCount = Product::where('featured', true)->where('status', 'active')->count();
+        // Calculate stats from the data we already have
+        $totalProducts = count($this->graphqlClient->query('query { products { id } }')['products'] ?? []);
+        $featuredProductCount = count($featuredProducts);
 
         return $this->view('home', [
             'title' => 'Promethex - Premium E-Commerce',

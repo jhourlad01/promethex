@@ -27,25 +27,51 @@ const Product = {
       'SELECT COUNT(*) as total FROM reviews WHERE product_id = ? AND is_approved = true',
       [parent.id]
     );
-    return rows[0].total;
+    return parseInt(rows[0].total) || 0;
   },
 
   primary_image(parent) {
-    if (parent.images && Array.isArray(parent.images)) {
-      return parent.images[0] || null;
+    let images = parent.images;
+    
+    // Parse JSON string if it's a string
+    if (typeof images === 'string') {
+      try {
+        images = JSON.parse(images);
+      } catch (e) {
+        return null;
+      }
     }
-    return parent.image_url || null;
+    
+    if (images && Array.isArray(images)) {
+      return images[0] || null;
+    }
+    return null;
   },
 
   images(parent) {
-    if (parent.images && Array.isArray(parent.images)) {
-      return parent.images;
+    let images = parent.images;
+    
+    // Parse JSON string if it's a string
+    if (typeof images === 'string') {
+      try {
+        images = JSON.parse(images);
+      } catch (e) {
+        return [];
+      }
     }
-    // Fallback to individual image fields
-    const images = [];
-    if (parent.image_url) images.push(parent.image_url);
-    if (parent.image_url_2) images.push(parent.image_url_2);
-    return images;
+    
+    if (images && Array.isArray(images)) {
+      return images;
+    }
+    return [];
+  },
+
+  stock_quantity(parent) {
+    // Ensure stock_quantity is always an integer
+    if (parent.stock_quantity === null || parent.stock_quantity === undefined) {
+      return 0;
+    }
+    return parseInt(parent.stock_quantity) || 0;
   }
 };
 

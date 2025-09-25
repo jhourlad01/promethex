@@ -2,101 +2,125 @@
 
 namespace Framework;
 
-use Monolog\Logger as MonologLogger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Formatter\LineFormatter;
-
 class Logger
 {
-    private static ?MonologLogger $logger = null;
-    private static string $level = 'info';
-
-    public static function configure(string $logPath, string $level = 'info'): void
+    private static $logDir;
+    private static $initialized = false;
+    
+    public static function init($logDir = null)
     {
-        self::$level = $level;
-        
-        // Ensure log directory exists
-        $logDir = dirname($logPath);
-        if (!is_dir($logDir)) {
-            mkdir($logDir, 0755, true);
-        }
-
-        self::$logger = new MonologLogger('framework');
-        
-        // Rotating file handler (daily rotation)
-        $handler = new RotatingFileHandler($logPath, 30, self::getMonologLevel($level));
-        $handler->setFormatter(new LineFormatter(
-            "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n",
-            'Y-m-d H:i:s'
-        ));
-        
-        self::$logger->pushHandler($handler);
-    }
-
-    public static function debug(string $message, array $context = []): void
-    {
-        self::log('debug', $message, $context);
-    }
-
-    public static function info(string $message, array $context = []): void
-    {
-        self::log('info', $message, $context);
-    }
-
-    public static function warning(string $message, array $context = []): void
-    {
-        self::log('warning', $message, $context);
-    }
-
-    public static function error(string $message, array $context = []): void
-    {
-        self::log('error', $message, $context);
-    }
-
-    public static function critical(string $message, array $context = []): void
-    {
-        self::log('critical', $message, $context);
-    }
-
-    private static function log(string $level, string $message, array $context = []): void
-    {
-        if (self::$logger === null) {
-            // Fallback to basic logging
-            $timestamp = date('Y-m-d H:i:s');
-            $contextStr = !empty($context) ? ' ' . json_encode($context) : '';
-            $logEntry = "[{$timestamp}] {$level}: {$message}{$contextStr}" . PHP_EOL;
-            error_log($logEntry);
+        if (self::$initialized) {
             return;
         }
-
-        $monologLevel = self::getMonologLevel($level);
-        self::$logger->addRecord($monologLevel, $message, $context);
+        
+        self::$logDir = $logDir ?: __DIR__ . '/../logs';
+        
+        // Create logs directory if it doesn't exist
+        if (!is_dir(self::$logDir)) {
+            mkdir(self::$logDir, 0755, true);
+        }
+        
+        // Debug: Log that logger is initialized
+        // error_log("Logger initialized with directory: " . self::$logDir);
+        
+        self::$initialized = true;
     }
-
-    private static function getMonologLevel(string $level): int
+    
+    public static function log($level, $message, $context = [])
     {
-        return match ($level) {
-            'debug' => MonologLogger::DEBUG,
-            'info' => MonologLogger::INFO,
-            'warning' => MonologLogger::WARNING,
-            'error' => MonologLogger::ERROR,
-            'critical' => MonologLogger::CRITICAL,
-            default => MonologLogger::INFO
-        };
+        self::init();
+        
+        $timestamp = date('Y-m-d H:i:s');
+        $contextStr = !empty($context) ? ' ' . json_encode($context) : '';
+        $logEntry = "[{$timestamp}] [{$level}] {$message}{$contextStr}" . PHP_EOL;
+        
+        // Log to file
+        $logFile = self::$logDir . '/app.log';
+        
+        // Debug: Log that we're writing to file
+        // file_put_contents(__DIR__ . '/../logs/debug.log', "Logger::log writing to: " . $logFile . "\n", FILE_APPEND);
+        // file_put_contents(__DIR__ . '/../logs/debug.log', "Logger::log writing: " . $logEntry, FILE_APPEND);
+        
+        file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+        
+        // Also log errors to separate error file
+        if (in_array(strtoupper($level), ['ERROR', 'CRITICAL', 'EMERGENCY'])) {
+            $errorFile = self::$logDir . '/error.log';
+            file_put_contents($errorFile, $logEntry, FILE_APPEND | LOCK_EX);
+        }
+        
+        // Log to PHP error log as well for development
+        if (strtoupper($level) === 'ERROR') {
+            error_log($message . $contextStr);
+        }
     }
-
-    public static function logException(\Throwable $exception): void
+    
+    public static function info($message, $context = [])
     {
-        self::error('Uncaught exception: ' . $exception->getMessage(), [
+        self::log('INFO', $message, $context);
+    }
+    
+    public static function warning($message, $context = [])
+    {
+        self::log('WARNING', $message, $context);
+    }
+    
+    public static function error($message, $context = [])
+    {
+        self::log('ERROR', $message, $context);
+    }
+    
+    public static function debug($message, $context = [])
+    {
+        self::log('DEBUG', $message, $context);
+    }
+    
+    public static function logRequest($method, $uri, $statusCode, $duration, $userAgent = null, $ip = null)
+    {
+        $context = [
+            'method' => $method,
+            'uri' => $uri,
+            'status' => $statusCode,
+            'duration' => $duration . 'ms',
+            'user_agent' => $userAgent,
+            'ip' => $ip
+        ];
+        
+        // Debug: Log that we're logging a request
+        // file_put_contents(__DIR__ . '/../logs/debug.log', "Logger::logRequest called with: " . json_encode($context) . "\n", FILE_APPEND);
+        
+        if ($statusCode >= 400) {
+            self::error("HTTP {$statusCode} {$method} {$uri}", $context);
+        } else {
+            self::info("HTTP {$statusCode} {$method} {$uri}", $context);
+        }
+    }
+    
+    public static function logException(\Throwable $exception, $context = [])
+    {
+        $errorContext = array_merge($context, [
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
             'trace' => $exception->getTraceAsString()
         ]);
-    }
 
-    public static function getLogger(): ?MonologLogger
+        self::error($exception->getMessage(), $errorContext);
+    }
+    
+    public static function logGraphQLError($message, $context = [])
     {
-        return self::$logger;
+        self::error("GraphQL Error: {$message}", $context);
+    }
+    
+    public static function configure($logFile = null, $level = 'info')
+    {
+        // This method is called from index.php but we don't need special configuration
+        // Just initialize the logger with the directory (not the file)
+        if ($logFile) {
+            $logDir = dirname($logFile);
+            self::init($logDir);
+        } else {
+            self::init();
+        }
     }
 }

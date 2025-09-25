@@ -254,7 +254,7 @@
                                         <div class="rating-breakdown">
                                             <?php for ($rating = 5; $rating >= 1; $rating--): ?>
                                                 <?php 
-                                                $count = $reviewStats['rating_distribution'][$rating];
+                                                $count = $reviewStats['rating_distribution'][$rating - 1];
                                                 $percentage = $reviewStats['total_reviews'] > 0 ? ($count / $reviewStats['total_reviews']) * 100 : 0;
                                                 ?>
                                                 <div class="rating-bar d-flex align-items-center mb-2">

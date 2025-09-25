@@ -7,7 +7,7 @@
     </div>
 
     <!-- Categories Grid -->
-    <?php if (!empty($categories) && $categories->count() > 0): ?>
+    <?php if (!empty($categories) && count($categories) > 0): ?>
     <div class="row g-4">
         <?php foreach ($categories as $category): ?>
         <div class="col-md-6 col-lg-4">

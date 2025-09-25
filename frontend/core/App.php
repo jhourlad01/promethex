@@ -2,6 +2,8 @@
 
 namespace Framework;
 
+use Framework\Logger;
+
 class App
 {
     private static ?App $instance = null;
@@ -164,6 +166,12 @@ class App
 
     public function run(): void
     {
+        $startTime = microtime(true);
+        
+        // Initialize logger
+        Logger::init();
+        // file_put_contents(__DIR__ . '/../logs/debug.log', "App::run() - Logger initialized\n", FILE_APPEND);
+        
         // Start session if not already started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -171,6 +179,20 @@ class App
         
         $request = new Request();
         $response = $this->router->dispatch($request);
+        
+        // Log the request
+        $duration = round((microtime(true) - $startTime) * 1000, 2);
+        // file_put_contents(__DIR__ . '/../logs/debug.log', "App::run() - About to log request\n", FILE_APPEND);
+        Logger::logRequest(
+            $request->getMethod(),
+            $request->getPath(),
+            $response->getStatusCode(),
+            $duration,
+            $_SERVER['HTTP_USER_AGENT'] ?? null,
+            $_SERVER['REMOTE_ADDR'] ?? null
+        );
+        // file_put_contents(__DIR__ . '/../logs/debug.log', "App::run() - Request logged\n", FILE_APPEND);
+        
         $response->send();
     }
 

@@ -3,11 +3,21 @@
 namespace App\Controllers;
 
 use Framework\Controller;
-use App\Models\Product;
-use App\Models\Category;
+use Framework\Request;
+use Framework\Response;
+use App\Services\GraphQLClient;
+use App\Services\DataTransformer;
 
 class ProductController extends Controller
 {
+    private $graphqlClient;
+    
+    public function __construct(Request $request, array $params = [])
+    {
+        parent::__construct($request, $params);
+        $this->graphqlClient = new GraphQLClient();
+    }
+    
     public function show()
     {
         $slug = $this->getParam('slug');
@@ -16,11 +26,8 @@ class ProductController extends Controller
             return $this->redirect('/');
         }
 
-        // Find product by slug
-        $product = Product::where('slug', $slug)
-            ->where('status', 'active')
-            ->with(['category', 'approvedReviews.user'])
-            ->first();
+        // Get product from GraphQL API
+        $product = $this->graphqlClient->getProduct($slug);
 
         if (!$product) {
             return $this->view('errors/404', [
@@ -30,31 +37,86 @@ class ProductController extends Controller
         }
 
         // Get related products (same category, excluding current product)
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->where('status', 'active')
-            ->where('in_stock', true)
-            ->limit(4)
-            ->get();
+        $relatedProductsQuery = '
+            query GetRelatedProducts($categoryId: ID!) {
+                products(category_id: $categoryId, limit: 4) {
+                    id
+                    name
+                    slug
+                    price
+                    sale_price
+                    primary_image
+                    average_rating
+                    total_reviews
+                }
+            }
+        ';
+
+        $relatedResult = $this->graphqlClient->query($relatedProductsQuery, [
+            'categoryId' => $product->category->id
+        ]);
+
+        $relatedProducts = array_filter($relatedResult['products'] ?? [], function($p) use ($product) {
+            return $p['id'] != $product->id;
+        });
+
+        // Limit to 4 related products
+        $relatedProducts = array_slice($relatedProducts, 0, 4);
 
         // Get recent reviews for this product
-        $recentReviews = $product->approvedReviews()
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+        $recentReviews = $this->graphqlClient->getProductReviews($product->id, 5);
 
-        // Get review statistics
-        $reviewStats = \App\Models\Review::getProductStats($product->id);
+        // Calculate review statistics
+        $reviewStats = $this->calculateReviewStats($recentReviews);
 
         return $this->view('product/show', [
             'title' => $product->name . ' - Promethex',
             'product' => $product,
-            'relatedProducts' => $relatedProducts,
+            'relatedProducts' => DataTransformer::transformProducts($relatedProducts),
             'recentReviews' => $recentReviews,
             'reviewStats' => $reviewStats,
-            'meta_description' => $product->meta_description ?? $product->short_description,
-            'meta_title' => $product->meta_title ?? $product->name
+            'meta_description' => $product->description ?? '',
+            'meta_title' => $product->name
         ], 'layout');
+    }
+    
+    /**
+     * Calculate review statistics from reviews collection
+     */
+    private function calculateReviewStats($reviews): array
+    {
+        if ($reviews->isEmpty()) {
+            return [
+                'average' => 0,
+                'average_rating' => 0,
+                'total_reviews' => 0,
+                'distribution' => [0, 0, 0, 0, 0],
+                'rating_distribution' => [0, 0, 0, 0, 0]
+            ];
+        }
+        
+        $total = $reviews->count();
+        $sum = 0;
+        foreach ($reviews as $review) {
+            $sum += $review->rating;
+        }
+        $average = $sum / $total;
+        
+        // Calculate distribution
+        $distribution = [0, 0, 0, 0, 0];
+        foreach ($reviews as $review) {
+            $rating = (int)$review->rating;
+            if ($rating >= 1 && $rating <= 5) {
+                $distribution[$rating - 1]++;
+            }
+        }
+        
+        return [
+            'average' => round($average, 1),
+            'average_rating' => round($average, 1),
+            'total_reviews' => $total,
+            'distribution' => $distribution,
+            'rating_distribution' => $distribution
+        ];
     }
 }

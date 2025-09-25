@@ -3,6 +3,9 @@
 use Framework\{App, Response, Auth, Middleware};
 
 return function(\Framework\App $app) {
+    // Debug: Log that routes are being loaded
+    error_log("Loading web routes...");
+    
     // Public routes
     $app->get('/', 'HomeController@index');
     $app->get('/product/{slug}', 'ProductController@show');
@@ -16,4 +19,6 @@ return function(\Framework\App $app) {
     $app->get('/dashboard', 'HomeController@dashboard', [Middleware::authWeb()]);
     $app->get('/profile', 'HomeController@profile', [Middleware::authWeb()]);
     $app->get('/account', 'HomeController@account', [Middleware::authWeb()]);
+    
+    error_log("Web routes loaded successfully");
 };

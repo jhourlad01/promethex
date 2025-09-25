@@ -69,7 +69,7 @@
 </style>
 
 <!-- Products Section -->
-<?php if (!empty($featuredProducts) && $featuredProducts->count() > 0): ?>
+<?php if (!empty($featuredProducts) && count($featuredProducts) > 0): ?>
 <div class="container">
     <div class="text-center mb-5">
         <h2 class="display-5 fw-bold mb-3">Featured Products</h2>
@@ -112,7 +112,7 @@
                             <?= htmlspecialchars($product->name) ?>
                         </a>
                     </h5>
-                    <p class="card-text text-muted mb-3"><?= htmlspecialchars($product->short_description ?? $product->description) ?></p>
+                    <p class="card-text text-muted mb-3"><?= htmlspecialchars($product->description) ?></p>
                 </div>
                 <div class="card-footer bg-transparent border-0 p-4 pt-0">
                     <div class="d-flex justify-content-between align-items-center">
